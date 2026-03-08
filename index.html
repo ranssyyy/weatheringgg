@@ -380,12 +380,23 @@
     letter-spacing: 2px; text-transform: uppercase;
   }
 
-  @media (max-width: 600px) {
-    .metrics { grid-template-columns: 1fr; }
-    .stats-row { grid-template-columns: repeat(2, 1fr); }
-    .config-row { grid-template-columns: 1fr; }
-    .metric-value { font-size: 60px; }
-    h1 { font-size: 34px; letter-spacing: 4px; }
+  @media (max-width: 768px) {
+    .container { padding: 24px 16px 40px; }
+    h1 { font-size: 28px; letter-spacing: 3px; }
+    .subtitle { font-size: 10px; letter-spacing: 2px; }
+    .metrics { grid-template-columns: 1fr; gap: 14px; }
+    .metric-card { padding: 24px 20px; }
+    .metric-value { font-size: 56px; }
+    .metric-unit { font-size: 20px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-card { padding: 14px; }
+    .stat-value { font-size: 22px; }
+    .chart-panel { padding: 20px 16px; }
+    .table-panel { padding: 20px 16px; }
+    .panel-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    table { font-size: 12px; }
+    th, td { padding: 10px 10px; }
+    .panel-title { font-size: 18px; }
   }
 </style>
 </head>
