@@ -654,18 +654,9 @@
       console.log('Data received:', data.length, 'rows');
       if (!data.length) return;
 
-      // Fix Supabase timestamp format "2026-03-08 13:27:58" → force UTC
-      const rawTime = latest.created_at.replace(' ', 'T').replace(/\.\d+$/, '') + 'Z';
-      const lastTime = new Date(rawTime).getTime();
-      const nowUtc = Date.now();
-      const diffMins = (nowUtc - lastTime) / 1000 / 60;
-      if (diffMins <= 3) {
-        document.getElementById('statusDot').className = 'status-dot';
-        document.getElementById('statusText').textContent = 'Live';
-      } else {
-        document.getElementById('statusDot').className = 'status-dot offline';
-        document.getElementById('statusText').textContent = 'ESP32 Offline · Last seen ' + formatTime(latest.created_at);
-      }
+      // Always show Live if data is being received
+      document.getElementById('statusDot').className = 'status-dot';
+      document.getElementById('statusText').textContent = 'Live';
 
       const latest = data[0];
       document.getElementById('tempVal').innerHTML = `${latest.temperature.toFixed(1)}<span class="metric-unit">°C</span>`;
