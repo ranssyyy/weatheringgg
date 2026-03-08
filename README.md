@@ -1,12 +1,9 @@
 # 🌤️ Weather Dashboard
 
-A live temperature and humidity monitoring dashboard built with **ESP32** and **DHT11 sensor**, storing data in **Supabase** and displayed on a beautiful sunset-themed web dashboard.
+A live temperature and humidity monitoring dashboard built with **ESP32** and **DHT11 sensor**, storing data in **Supabase** and displayed on a sunset-themed web dashboard.
 
 ## 🌐 Live Demo
 👉 **[weatheringgg.netlify.app](https://weatheringgg.netlify.app)**
-
-## 📸 Preview
-![Weather Dashboard](preview.png)
 
 ## 🛠️ Built With
 - **ESP32** — microcontroller that reads sensor data and sends it to the cloud
