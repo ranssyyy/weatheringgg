@@ -648,8 +648,10 @@
         `${baseUrl}/rest/v1/sensor_data?select=*&order=created_at.desc&limit=20`,
         { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
       );
-      if (!res.ok) throw new Error('Failed');
+      console.log('Fetch status:', res.status);
+      if (!res.ok) throw new Error('Failed: ' + res.status);
       const data = await res.json();
+      console.log('Data received:', data.length, 'rows');
       if (!data.length) return;
 
       // Fix Supabase timestamp format "2026-03-08 13:27:58" → force UTC
