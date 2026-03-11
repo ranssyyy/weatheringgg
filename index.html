@@ -374,6 +374,26 @@
 
   .loading { text-align: center; padding: 40px; color: var(--text-dim); font-size: 14px; letter-spacing: 2px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
 
+  .download-btn {
+    background: linear-gradient(135deg, var(--sky5), var(--sky6));
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    font-family: 'Josefin Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .download-btn:hover { opacity: 0.85; }
+
+  .download-btn.hum-btn {
+    background: linear-gradient(135deg, #2d6a8f, #7eb8d4);
+  }
+
   footer {
     text-align: center; margin-top: 40px;
     color: var(--text-dim); font-size: 11px;
@@ -480,10 +500,16 @@
     <div style="margin-bottom: 24px;">
       <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:16px; color:rgba(245,168,85,0.8); margin-bottom:12px; letter-spacing:1px;">🌡️ Temperature (°C)</div>
       <canvas id="chartTemp" height="80"></canvas>
+    <div style="text-align:right; margin-top:12px;">
+        <button class="download-btn" onclick="downloadCSV('temperature')">🌡️ Download Temperature CSV</button>
+      </div>
     </div>
     <div>
       <div style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:16px; color:rgba(126,184,212,0.8); margin-bottom:12px; letter-spacing:1px;">💧 Humidity (%)</div>
       <canvas id="chartHum" height="80"></canvas>
+    <div style="text-align:right; margin-top:12px;">
+        <button class="download-btn hum-btn" onclick="downloadCSV('humidity')">💧 Download Humidity CSV</button>
+      </div>
     </div>
   </div>
 
@@ -664,6 +690,7 @@
       const data = await res.json();
       console.log('Data received:', data.length, 'rows');
       if (!data.length) return;
+      latestData = data;
 
       // Always show Live if data is being received
       document.getElementById('statusDot').className = 'status-dot';
@@ -712,6 +739,35 @@
       document.getElementById('statusDot').className = 'status-dot offline';
       document.getElementById('statusText').textContent = 'Offline';
     }
+  }
+
+  // Store fetched data globally for CSV export
+  let latestData = [];
+
+  function downloadCSV(type) {
+    if (!latestData.length) return alert('No data to download yet!');
+    let rows, filename;
+    if (type === 'temperature') {
+      rows = [['ID', 'Temperature (°C)', 'Date & Time (PH)']];
+      latestData.forEach(d => {
+        rows.push([d.id, d.temperature.toFixed(1), formatDateTime(d.created_at)]);
+      });
+      filename = 'temperature_' + new Date().toISOString().slice(0,10) + '.csv';
+    } else {
+      rows = [['ID', 'Humidity (%)', 'Date & Time (PH)']];
+      latestData.forEach(d => {
+        rows.push([d.id, d.humidity.toFixed(1), formatDateTime(d.created_at)]);
+      });
+      filename = 'humidity_' + new Date().toISOString().slice(0,10) + '.csv';
+    }
+    const csv = rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   function startDashboard() {
