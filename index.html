@@ -1,179 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ransy Weather Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-<link rel="stylesheet" href="style.css">
+  <title>Ransy Weather Dashboard</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="sky"></div>
-<div class="stars" id="stars"></div>
+
+<div class="sky-bg"></div>
 <div class="sun"></div>
-<div class="clouds" id="clouds"></div>
-<svg class="terrain" viewBox="0 0 1440 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="height:120px">
-  <rect x="0" y="80" width="1440" height="40" fill="#5a5a5a"/>
-  <rect x="0" y="64" width="1440" height="20" fill="#8B5E3C"/>
-  <rect x="0" y="56" width="1440" height="12" fill="#5D8A3C"/>
-  <rect x="0"   y="44" width="32" height="16" fill="#5D8A3C"/>
-  <rect x="64"  y="48" width="32" height="12" fill="#5D8A3C"/>
-  <rect x="128" y="44" width="32" height="16" fill="#5D8A3C"/>
-  <rect x="224" y="40" width="32" height="20" fill="#5D8A3C"/>
-  <rect x="320" y="48" width="32" height="12" fill="#5D8A3C"/>
-  <rect x="416" y="44" width="32" height="16" fill="#5D8A3C"/>
-  <rect x="512" y="40" width="32" height="20" fill="#5D8A3C"/>
-  <rect x="608" y="44" width="32" height="16" fill="#5D8A3C"/>
-  <rect x="704" y="48" width="32" height="12" fill="#5D8A3C"/>
-  <rect x="800" y="44" width="32" height="16" fill="#5D8A3C"/>
-  <rect x="896" y="40" width="32" height="20" fill="#5D8A3C"/>
-  <rect x="992" y="44" width="32" height="16" fill="#5D8A3C"/>
-  <rect x="1088" y="48" width="32" height="12" fill="#5D8A3C"/>
-  <rect x="1184" y="44" width="32" height="16" fill="#5D8A3C"/>
-  <rect x="1280" y="40" width="32" height="20" fill="#5D8A3C"/>
-  <rect x="1376" y="44" width="32" height="16" fill="#5D8A3C"/>
-  <rect x="180" y="8"  width="16" height="40" fill="#5D3A1A"/>
-  <rect x="156" y="0"  width="64" height="32" fill="#3d7a2a"/>
-  <rect x="164" y="0"  width="48" height="8"  fill="#4a8a32"/>
-  <rect x="900" y="8"  width="16" height="40" fill="#5D3A1A"/>
-  <rect x="876" y="0"  width="64" height="32" fill="#3d7a2a"/>
-  <rect x="884" y="0"  width="48" height="8"  fill="#4a8a32"/>
-  <rect x="500" y="44" width="8"  height="16" fill="#a07030"/>
-  <rect x="498" y="36" width="12" height="12" fill="#f5a030"/>
-  <rect x="500" y="38" width="8"  height="8"  fill="#ffd060"/>
-</svg>
 
-<!-- Steve -->
-<div class="characters">
-  <div class="character steve" style="position:fixed;bottom:80px;left:5vw;">
-    <svg width="48" height="80" viewBox="0 0 12 20" xmlns="http://www.w3.org/2000/svg" style="image-rendering:pixelated">
-      <rect x="2" y="0" width="8" height="8" fill="#c8a06a"/>
-      <rect x="3" y="2" width="2" height="2" fill="#fff"/>
-      <rect x="7" y="2" width="2" height="2" fill="#fff"/>
-      <rect x="3" y="2" width="2" height="2" fill="#5a8fd0" opacity="0.8"/>
-      <rect x="7" y="2" width="2" height="2" fill="#5a8fd0" opacity="0.8"/>
-      <rect x="4" y="5" width="4" height="1" fill="#8B5030"/>
-      <rect x="2" y="8" width="8" height="6" fill="#3a5fc8"/>
-      <rect x="0" y="8" width="2" height="6" fill="#c8a06a"/>
-      <rect x="10" y="8" width="2" height="6" fill="#3a5fc8"/>
-      <rect x="2" y="14" width="3" height="6" fill="#3a3ac8"/>
-      <rect x="7" y="14" width="3" height="6" fill="#3a3ac8"/>
-    </svg>
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+<div class="cloud c3"></div>
+
+<div class="wrapper">
+
+  <div class="header">
+    <div style="font-size:24px; margin-bottom:8px;">⛅</div>
+    <h1>RANSY WEATHER DASHBOARD</h1>
+    <div class="subtitle">⛏ ESP32 + DHT11 SENSOR ⛏</div>
   </div>
+
+  <div class="cards-row">
+    <div class="mc-card temp-card">
+      <span class="card-icon">🌡️</span>
+      <div class="card-label">:: TEMPERATURE</div>
+      <div class="card-value">28.4°C</div>
+    </div>
+
+    <div class="mc-card hum-card">
+      <span class="card-icon">💧</span>
+      <div class="card-label">:: HUMIDITY</div>
+      <div class="card-value">78%</div>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="tempChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="humChart"></canvas>
+  </div>
+
+  <div class="readings-table">
+    <table>
+      <tbody id="readings-body"></tbody>
+    </table>
+  </div>
+
 </div>
 
-<!-- Ender Dragon -->
-<div style="position:fixed;top:8%;left:0;right:0;z-index:4;pointer-events:none;">
-  <div id="enderDragon" style="position:absolute;animation:dragonFly 18s linear infinite;">
-    <svg width="120" height="60" viewBox="0 0 30 15" xmlns="http://www.w3.org/2000/svg" style="image-rendering:pixelated">
-      <rect x="10" y="5" width="10" height="5" fill="#1a0a2e"/>
-      <rect x="11" y="4" width="8"  height="7" fill="#2a1050"/>
-      <rect x="20" y="4" width="6"  height="5" fill="#1a0a2e"/>
-      <rect x="21" y="3" width="4"  height="6" fill="#2a1050"/>
-      <rect x="24" y="4" width="2"  height="2" fill="#ff00ff"/>
-      <rect x="22" y="8" width="4"  height="2" fill="#1a0a2e"/>
-      <rect x="22" y="9" width="4"  height="1" fill="#ff4444" opacity="0.6"/>
-      <rect x="18" y="5" width="4"  height="3" fill="#2a1050"/>
-      <rect x="6"  y="6" width="5"  height="3" fill="#2a1050"/>
-      <rect x="3"  y="7" width="4"  height="2" fill="#1a0a2e"/>
-      <rect x="1"  y="7" width="3"  height="2" fill="#2a1050"/>
-      <rect x="10" y="1" width="3"  height="4" fill="#3a1580" class="wing-l"/>
-      <rect x="7"  y="0" width="4"  height="3" fill="#2a0a60" class="wing-l"/>
-      <rect x="5"  y="1" width="3"  height="2" fill="#1a0540" class="wing-l"/>
-      <rect x="10" y="9"  width="3" height="4" fill="#3a1580" class="wing-r"/>
-      <rect x="7"  y="11" width="4" height="3" fill="#2a0a60" class="wing-r"/>
-      <rect x="5"  y="12" width="3" height="2" fill="#1a0540" class="wing-r"/>
-      <rect x="12" y="3" width="2" height="2" fill="#4a20a0"/>
-      <rect x="15" y="3" width="2" height="2" fill="#4a20a0"/>
-      <rect x="18" y="3" width="2" height="2" fill="#4a20a0"/>
-    </svg>
-  </div>
-</div>
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
-<!-- Alex -->
-<div class="character alex" style="position:fixed;bottom:80px;right:5vw;">
-  <svg width="40" height="80" viewBox="0 0 10 20" xmlns="http://www.w3.org/2000/svg" style="image-rendering:pixelated">
-    <rect x="1" y="0" width="8" height="8" fill="#f0b882"/>
-    <rect x="2" y="2" width="2" height="2" fill="#fff"/>
-    <rect x="6" y="2" width="2" height="2" fill="#fff"/>
-    <rect x="2" y="2" width="2" height="2" fill="#5ab85a" opacity="0.9"/>
-    <rect x="6" y="2" width="2" height="2" fill="#5ab85a" opacity="0.9"/>
-    <rect x="3" y="5" width="4" height="1" fill="#c06040"/>
-    <rect x="1" y="0" width="8" height="2" fill="#c87820"/>
-    <rect x="0" y="2" width="1" height="4" fill="#c87820"/>
-    <rect x="9" y="2" width="1" height="6" fill="#c87820"/>
-    <rect x="2" y="8" width="6" height="6" fill="#3aaa5a"/>
-    <rect x="0" y="8" width="2" height="5" fill="#f0b882"/>
-    <rect x="8" y="8" width="2" height="5" fill="#3aaa5a"/>
-    <rect x="2" y="14" width="2" height="6" fill="#5050d0"/>
-    <rect x="6" y="14" width="2" height="6" fill="#5050d0"/>
-  </svg>
-</div>
-
-<div class="container">
-  <header>
-    <div class="header-icon">⛅</div>
-    <h1>RANSY WEATHER<br>DASHBOARD</h1>
-    <p class="subtitle">▸ ESP32 + DHT11 SENSOR ◂</p>
-    <div class="status-pill">
-      <div class="status-dot" id="statusDot"></div>
-      <span id="statusText">LOADING...</span>
-    </div>
-  </header>
-  <div class="metrics">
-    <div class="pixel-panel metric-card temp">
-      <div class="metric-bg-icon">🌡️</div>
-      <div class="metric-label">:: TEMPERATURE</div>
-      <div class="metric-value" id="tempVal">--<span class="metric-unit">°C</span></div>
-      <div class="metric-sub" id="tempTime">Awaiting data...</div>
-    </div>
-    <div class="pixel-panel metric-card hum">
-      <div class="metric-bg-icon">💧</div>
-      <div class="metric-label">:: HUMIDITY</div>
-      <div class="metric-value" id="humVal">--<span class="metric-unit">%</span></div>
-      <div class="metric-sub" id="humTime">Awaiting data...</div>
-    </div>
-  </div>
-  <div class="stats-row">
-    <div class="pixel-panel stat-card">
-      <div class="stat-label">TEMP MAX</div>
-      <div class="stat-value" id="tempMax" style="color:var(--temp-color)">--</div>
-    </div>
-    <div class="pixel-panel stat-card">
-      <div class="stat-label">TEMP MIN</div>
-      <div class="stat-value" id="tempMin" style="color:var(--temp-color)">--</div>
-    </div>
-    <div class="pixel-panel stat-card">
-      <div class="stat-label">HUM MAX</div>
-      <div class="stat-value" id="humMax" style="color:var(--hum-color)">--</div>
-    </div>
-    <div class="pixel-panel stat-card">
-      <div class="stat-label">HUM MIN</div>
-      <div class="stat-value" id="humMin" style="color:var(--hum-color)">--</div>
-    </div>
-  </div>
-  <div class="divider">▸ HISTORICAL DATA ◂</div>
-  <div class="pixel-panel chart-panel">
-    <div class="chart-section">
-      <div class="chart-label temp">▸ TEMPERATURE (°C)</div>
-      <canvas id="chartTemp" height="80"></canvas>
-      <div><button class="dl-btn" onclick="downloadCSV('temperature')">[ ⬇ EXPORT TEMP CSV ]</button></div>
-    </div>
-    <div class="chart-section">
-      <div class="chart-label hum">▸ HUMIDITY (%)</div>
-      <canvas id="chartHum" height="80"></canvas>
-      <div><button class="dl-btn hum-dl" onclick="downloadCSV('humidity')">[ ⬇ EXPORT HUM CSV ]</button></div>
-    </div>
-  </div>
-  <div class="pixel-panel table-panel">
-    <div class="panel-header">
-      <div class="panel-title">▸ RECENT READINGS</div>
-    </div>
-    <div id="tableContainer"><div class="loading">LOADING DATA...</div></div>
-  </div>
-  <footer>⛏ RANSY WEATHER DASHBOARD · ESP32 + DHT11 · UPDATES EVERY 5 SEC ⛏</footer>
-</div>
+<!-- JS -->
 <script src="script.js"></script>
+
 </body>
 </html>
