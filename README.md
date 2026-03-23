@@ -6,7 +6,6 @@ A live temperature and humidity monitoring dashboard built with **ESP32** and **
 - **ESP32** — microcontroller that reads sensor data and sends it to the cloud
 - **DHT11** — temperature and humidity sensor
 - **Supabase** — cloud database that stores all readings
-- **Netlify** — hosts the live web dashboard
 - **Chart.js** — renders the live temperature and humidity charts
 
 ## ⚙️ How It Works
