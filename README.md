@@ -2,14 +2,10 @@
 
 A live temperature and humidity monitoring dashboard built with **ESP32** and **DHT11 sensor**, storing data in **Supabase** and displayed on a sunset-themed web dashboard.
 
-## 🌐 Live Demo
-👉 **[weatheringgg.netlify.app](https://weatheringgg.netlify.app)**
-
 ## 🛠️ Built With
 - **ESP32** — microcontroller that reads sensor data and sends it to the cloud
 - **DHT11** — temperature and humidity sensor
 - **Supabase** — cloud database that stores all readings
-- **Netlify** — hosts the live web dashboard
 - **Chart.js** — renders the live temperature and humidity charts
 
 ## ⚙️ How It Works
