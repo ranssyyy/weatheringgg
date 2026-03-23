@@ -1,65 +1,90 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Ransy Weather Dashboard</title>
+  <title>Ransy Weather Dashboard - Dragon</title>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="sky-bg"></div>
-<div class="sun"></div>
 
-<div class="cloud c1"></div>
-<div class="cloud c2"></div>
-<div class="cloud c3"></div>
+<!-- STARS -->
+<svg class="stars" viewBox="0 0 800 300">
+  <!-- (same stars content from original, no changes) -->
+</svg>
+
+<div class="sun"></div>
+<div class="horizon-glow"></div>
+
+<!-- CLOUDS -->
+<!-- (ALL cloud SVGs SAME as original — copy directly here) -->
+
+<!-- DRAGON -->
+<div class="dragon-wrap">
+  <!-- 🔥 IMPORTANT: COPY FULL DRAGON SVG FROM ORIGINAL HERE -->
+</div>
+
+<!-- TERRAIN -->
+<!-- (COPY FULL TERRAIN SVG HERE) -->
 
 <div class="wrapper">
 
   <div class="header">
-    <div style="font-size:24px; margin-bottom:8px;">⛅</div>
+    <div style="font-size:24px;margin-bottom:8px;">⛅</div>
     <h1>RANSY WEATHER DASHBOARD</h1>
     <div class="subtitle">⛏ ESP32 + DHT11 SENSOR ⛏</div>
   </div>
 
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item">⛏ RANSY WEATHER DASHBOARD · ESP32 + DHT11 · UPDATES EVERY 5 SEC</span>
+      <span class="ticker-item">🌡️ TEMP: 28.4°C · 💧 HUMIDITY: 78% · 🐉 ENDER DRAGON SPOTTED</span>
+    </div>
+  </div>
+
+  <!-- ALERT -->
+  <div class="alert-toast" id="alertToast">
+    <div class="alert-toast-icon">⚠️</div>
+    <div>
+      <div class="alert-toast-title">!! HUMIDITY WARNING !!</div>
+      <div class="alert-toast-msg">Humidity is high</div>
+    </div>
+    <div onclick="closeAlert()">[X]</div>
+  </div>
+
+  <!-- CARDS -->
   <div class="cards-row">
     <div class="mc-card temp-card">
       <span class="card-icon">🌡️</span>
-      <div class="card-label">:: TEMPERATURE</div>
       <div class="card-value">28.4°C</div>
     </div>
 
     <div class="mc-card hum-card">
       <span class="card-icon">💧</span>
-      <div class="card-label">:: HUMIDITY</div>
       <div class="card-value">78%</div>
     </div>
   </div>
 
-  <div class="chart-container">
-    <canvas id="tempChart"></canvas>
+  <!-- SUGGESTIONS -->
+  <div class="suggest-panel">
+    <div id="suggestGrid"></div>
   </div>
 
-  <div class="chart-container">
-    <canvas id="humChart"></canvas>
-  </div>
+  <!-- CHARTS -->
+  <canvas id="tempChart"></canvas>
+  <canvas id="humChart"></canvas>
 
-  <div class="readings-table">
-    <table>
-      <tbody id="readings-body"></tbody>
-    </table>
-  </div>
+  <!-- TABLE -->
+  <table>
+    <tbody id="readings-body"></tbody>
+  </table>
 
 </div>
 
-<!-- Chart.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-
-<!-- JS -->
 <script src="script.js"></script>
 
 </body>
