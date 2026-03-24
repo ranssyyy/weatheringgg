@@ -12,7 +12,7 @@
      LOADING SCREEN
      ============================================================ -->
 <div id="loading-screen">
-  <div class="loading-logo">⛅ RANSYY WEATHER<br>DASHBOARD</div>
+  <div class="loading-logo">⛅ RANSY WEATHER<br>DASHBOARD</div>
   <div class="loading-sub">ESP32 + DHT11 SENSOR NETWORK</div>
   <div class="loading-dirt">
     <div class="dirt-block"></div>
@@ -463,7 +463,6 @@
   </div>
   <div style="display:flex;flex-direction:column;gap:5px;">
     <button class="music-btn" id="musicToggle" onclick="toggleMusic()">[ ▶ PLAY ]</button>
-    <button class="music-btn" onclick="nextTrack()">[ ⏭ NEXT ]</button>
   </div>
 </div>
 
@@ -583,12 +582,12 @@
   <div class="chart-container">
     <div class="chart-title">▸ TEMPERATURE (°C)</div>
     <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
-    <button class="export-btn">⬇ EXPORT TEMP CSV</button>
+    <button class="export-btn" onclick="downloadCSV('temperature')">⬇ EXPORT TEMP CSV</button>
   </div>
   <div class="chart-container">
     <div class="chart-title">▸ HUMIDITY (%)</div>
     <div class="chart-wrap"><canvas id="humChart"></canvas></div>
-    <button class="export-btn">⬇ EXPORT HUM CSV</button>
+    <button class="export-btn" onclick="downloadCSV('humidity')">⬇ EXPORT HUM CSV</button>
   </div>
 
   <!-- RECENT READINGS -->
