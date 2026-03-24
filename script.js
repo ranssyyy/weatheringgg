@@ -1,3 +1,8 @@
+/* ============================================================
+   RANSY WEATHER DASHBOARD v2 — script.js
+   Fixed time-based sky | Music player | Charts | Suggestions
+   ============================================================ */
+
 /* ----------------------------------------------------------
    LOADING SCREEN
    ---------------------------------------------------------- */
@@ -168,13 +173,7 @@ const MC_MELODY = [
 ];
 let melodyIndex = 0;
 
-const TRACK_NAMES = [
-  'Sweden — C418',
-  'Wet Hands — C418',
-  'Subwoofer Lullaby — C418',
-  'Living Mice — C418',
-  'Mice on Venus — C418',
-];
+const TRACK_NAMES = ['Pigstep — Lena Raine'];
 let trackIndex = 0;
 
 function getAudioCtx() {
@@ -241,12 +240,6 @@ function toggleMusic() {
   }
 }
 
-function nextTrack() {
-  trackIndex = (trackIndex + 1) % TRACK_NAMES.length;
-  melodyIndex = 0;
-  document.getElementById('musicTitle').textContent = TRACK_NAMES[trackIndex];
-}
-
 function setVolume(val) {
   volumeLevel = parseFloat(val) / 100;
   document.getElementById('volDisplay').textContent = val + '%';
@@ -281,7 +274,7 @@ function buildCharts() {
     }
   };
 
-  new Chart(document.getElementById('tempChart'), {
+  tempChartRef = new Chart(document.getElementById('tempChart'), {
     type: 'line',
     data: {
       labels: LABELS,
@@ -300,7 +293,7 @@ function buildCharts() {
     }
   });
 
-  new Chart(document.getElementById('humChart'), {
+  humChartRef = new Chart(document.getElementById('humChart'), {
     type: 'line',
     data: {
       labels: LABELS,
@@ -405,20 +398,148 @@ function dismissAlert() {
 /* ----------------------------------------------------------
    INIT
    ---------------------------------------------------------- */
+/* ----------------------------------------------------------
+   SUPABASE CONFIG
+   ---------------------------------------------------------- */
+const SUPABASE_URL = 'https://tzspnjmksbfloelujzjc.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6c3Buam1rc2JmbG9lbHVqempjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODExNDYsImV4cCI6MjA4ODQ1NzE0Nn0.6ymNLXSgyE50BlU1cgD4czM2R5S1jhpHN5ykfr2Q0rc';
+
+let latestData = [];
+let tempChartRef = null;
+let humChartRef  = null;
+
+/* ----------------------------------------------------------
+   TIME HELPERS (PH UTC+8)
+   ---------------------------------------------------------- */
+function toPH(dateStr) {
+  const fixed = dateStr.replace(' ','T').replace(/\.\d+$/, '') + 'Z';
+  return new Date(new Date(fixed).getTime() + 8 * 3600000);
+}
+function fmtTime(dateStr) {
+  const d = toPH(dateStr);
+  let h = d.getUTCHours();
+  const m = String(d.getUTCMinutes()).padStart(2,'0');
+  const s = String(d.getUTCSeconds()).padStart(2,'0');
+  const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+  return `${h}:${m}:${s} ${ap}`;
+}
+function fmtDateTime(dateStr) {
+  const d = toPH(dateStr);
+  const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let h = d.getUTCHours();
+  const m = String(d.getUTCMinutes()).padStart(2,'0');
+  const s = String(d.getUTCSeconds()).padStart(2,'0');
+  const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+  return `${mo[d.getUTCMonth()]} ${d.getUTCDate()} - ${h}:${m}:${s} ${ap}`;
+}
+
+/* ----------------------------------------------------------
+   FETCH FROM SUPABASE
+   ---------------------------------------------------------- */
+async function fetchSensorData() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/sensor_data?select=*&order=created_at.desc&limit=20`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+    );
+    if (!res.ok) throw new Error('fetch failed');
+    const data = await res.json();
+    if (!data.length) return;
+    latestData = data;
+
+    const latest = data[0];
+    const temp = latest.temperature.toFixed(1);
+    const hum  = latest.humidity.toFixed(1);
+
+    // Update cards
+    document.querySelector('.temp-card .card-value').textContent = temp + '°C';
+    document.querySelector('.hum-card  .card-value').textContent = hum  + '%';
+    document.querySelector('.temp-card .card-status').textContent = '● LIVE · ' + fmtTime(latest.created_at);
+    document.querySelector('.hum-card  .card-status').textContent = '● LIVE · ' + fmtTime(latest.created_at);
+
+    // Stats
+    const temps = data.map(d => d.temperature);
+    const hums  = data.map(d => d.humidity);
+    const stats = document.querySelectorAll('.ms-value');
+    if (stats[0]) stats[0].textContent = Math.max(...temps).toFixed(1) + '°C';
+    if (stats[1]) stats[1].textContent = Math.min(...temps).toFixed(1) + '°C';
+    if (stats[2]) stats[2].textContent = Math.max(...hums).toFixed(1) + '%';
+    if (stats[3]) stats[3].textContent = Math.min(...hums).toFixed(1) + '%';
+
+    // Charts
+    const rev    = [...data].reverse();
+    const labels = rev.map(d => fmtTime(d.created_at));
+    if (tempChartRef) { tempChartRef.data.labels = labels; tempChartRef.data.datasets[0].data = rev.map(d => d.temperature); tempChartRef.update(); }
+    if (humChartRef)  { humChartRef.data.labels  = labels; humChartRef.data.datasets[0].data  = rev.map(d => d.humidity);    humChartRef.update(); }
+
+    // Table
+    const tbody = document.getElementById('readings-body');
+    tbody.innerHTML = data.slice(0, 8).map(d => {
+      const highHum = d.humidity > 80;
+      return `<tr>
+        <td>${fmtTime(d.created_at)}</td>
+        <td>${d.temperature.toFixed(1)}</td>
+        <td>${d.humidity.toFixed(1)}</td>
+        <td style="color:${highHum ? '#ff7043' : '#66bb6a'}">${highHum ? 'HIGH HUM' : 'NORMAL'}</td>
+      </tr>`;
+    }).join('');
+
+    // Ticker live update
+    const tickers = document.querySelectorAll('.ticker-item');
+    tickers.forEach((t, i) => {
+      if (i % 2 === 1) t.textContent = `🌡️ TEMP: ${temp}°C · 💧 HUMIDITY: ${hum}% · ☀️ SKY UPDATES WITH YOUR LOCAL TIME · ♪ PRESS PLAY FOR MINECRAFT MUSIC`;
+    });
+
+    // Comfort bar
+    const comfort = Math.max(0, Math.min(100, 100 - Math.abs(parseFloat(temp) - 26) * 5 - Math.abs(parseFloat(hum) - 60) * 0.5));
+    const bar = document.querySelector('.comfort-bar-fill');
+    const score = document.querySelector('.comfort-score');
+    if (bar)   bar.style.width = comfort.toFixed(0) + '%';
+    if (score) score.textContent = comfort.toFixed(0) + ' / 100';
+
+  } catch(e) {
+    console.error('Supabase fetch error:', e);
+  }
+}
+
+/* ----------------------------------------------------------
+   CSV EXPORT
+   ---------------------------------------------------------- */
+function downloadCSV(type) {
+  if (!latestData.length) return alert('No data yet!');
+  let rows, filename;
+  if (type === 'temperature') {
+    rows = [['ID','Temperature (°C)','Date & Time (PH)']];
+    latestData.forEach(d => rows.push([d.id, d.temperature.toFixed(1), fmtDateTime(d.created_at)]));
+    filename = `temperature_${new Date().toISOString().slice(0,10)}.csv`;
+  } else {
+    rows = [['ID','Humidity (%)','Date & Time (PH)']];
+    latestData.forEach(d => rows.push([d.id, d.humidity.toFixed(1), fmtDateTime(d.created_at)]));
+    filename = `humidity_${new Date().toISOString().slice(0,10)}.csv`;
+  }
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = filename; a.click();
+}
+
+/* ----------------------------------------------------------
+   INIT
+   ---------------------------------------------------------- */
 window.addEventListener('DOMContentLoaded', () => {
   startLoadingScreen();
 
-  // Sky runs immediately and then every 30 seconds (more responsive)
   updateSky();
   setInterval(updateSky, 30 * 1000);
-
-  // Clock ticks every second
   setInterval(updateClock, 1000);
 
   buildCharts();
   buildReadings();
   renderSuggestions();
 
-  // Set initial music track name
   document.getElementById('musicTitle').textContent = TRACK_NAMES[0];
+
+  // Fetch real sensor data
+  fetchSensorData();
+  setInterval(fetchSensorData, 5000);
 });
