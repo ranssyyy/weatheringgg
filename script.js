@@ -1,35 +1,35 @@
 /* ============================================================
-   RANSY WEATHER DASHBOARD — script.js
-   Minecraft-themed | Time-based sky | Loading screen | Charts
+   RANSY WEATHER DASHBOARD v2 — script.js
+   Fixed time-based sky | Music player | Charts | Suggestions
    ============================================================ */
 
 /* ----------------------------------------------------------
    LOADING SCREEN
    ---------------------------------------------------------- */
 const LOADING_TIPS = [
-  "TIP: Creepers will destroy your sensor if you leave it outside.",
-  "TIP: Always carry a water bucket when near the Nether.",
-  "TIP: Ender Dragons drop 12,000 XP on first kill.",
-  "TIP: Humidity above 80% means rain is incoming. Stay inside.",
-  "TIP: Steve uses an iron sword — it deals 6 damage.",
-  "TIP: Never dig straight down. Or up. Especially not up.",
+  "TIP: Ghasts can only be hurt by reflecting their own fireballs.",
+  "TIP: Steve's favorite food is a golden apple. Very nutritious.",
+  "TIP: Humidity above 80% feels like walking through a cloud.",
+  "TIP: Alex was added in Minecraft 1.8. She is just as strong as Steve.",
+  "TIP: Never dig straight down. Ever. Seriously.",
   "TIP: High temperature + high humidity = heat index danger.",
-  "TIP: Press F3 to see coordinates. And maybe the weather.",
+  "TIP: Ghasts make crying sounds because they are sad about the weather.",
+  "TIP: Press F3 to see coordinates. Useful in caves AND in dashboards.",
+  "TIP: ESP32 sensors work best when kept away from direct sunlight.",
 ];
 
 function startLoadingScreen() {
-  const bar = document.getElementById('loadingBar');
-  const pct = document.getElementById('loadingPct');
-  const tip = document.getElementById('loadingTip');
+  const bar    = document.getElementById('loadingBar');
+  const pct    = document.getElementById('loadingPct');
+  const tip    = document.getElementById('loadingTip');
   const screen = document.getElementById('loading-screen');
 
   tip.textContent = LOADING_TIPS[Math.floor(Math.random() * LOADING_TIPS.length)];
 
   let progress = 0;
   const interval = setInterval(() => {
-    // Randomize speed for realism
-    const increment = Math.random() * 4 + 1;
-    progress = Math.min(progress + increment, 100);
+    const inc = Math.random() * 3.5 + 0.8;
+    progress = Math.min(progress + inc, 100);
     bar.style.width = progress + '%';
     pct.textContent = Math.floor(progress) + '%';
 
@@ -37,45 +37,81 @@ function startLoadingScreen() {
       clearInterval(interval);
       setTimeout(() => {
         screen.classList.add('fade-out');
-        setTimeout(() => { screen.style.display = 'none'; }, 650);
-      }, 400);
+        setTimeout(() => { screen.style.display = 'none'; }, 700);
+      }, 350);
     }
-  }, 60);
+  }, 55);
 }
 
 /* ----------------------------------------------------------
-   TIME-BASED SKY SYSTEM
+   TIME-BASED SKY (Philippines local time — uses browser clock)
+   hour 0-5   → night
+   hour 6-8   → morning
+   hour 9-17  → day
+   hour 18-20 → sunset
+   hour 21-23 → evening/night
    ---------------------------------------------------------- */
-const SKY_CONFIG = {
-  //         hour range   class          sunLeft  sunBottom  showStars  cloudOpacity  horizonOpacity  description
-  night:   { hours: [0,5],   cls: 'sky-night',  left:'72%', bottom:'55%', stars:1.0, clouds:0.3, horizon:0.0, label:'NIGHT',      icon:'🌙' },
-  morning: { hours: [6,8],   cls: 'sky-morning', left:'18%', bottom:'35%', stars:0.2, clouds:0.7, horizon:0.8, label:'MORNING',    icon:'🌅' },
-  day:     { hours: [9,17],  cls: 'sky-day',     left:'60%', bottom:'55%', stars:0.0, clouds:1.0, horizon:0.0, label:'DAYTIME',    icon:'☀️' },
-  sunset:  { hours: [18,20], cls: 'sky-sunset',  left:'50%', bottom:'24%', stars:0.3, clouds:0.8, horizon:1.0, label:'SUNSET',     icon:'🌄' },
-  evening: { hours: [21,23], cls: 'sky-night',   left:'68%', bottom:'48%', stars:0.9, clouds:0.2, horizon:0.0, label:'EVENING',    icon:'🌙' },
+const SKY_PERIODS = {
+  night: {
+    skyClass: 'sky-night',
+    stars: 1.0, clouds: 0.25, horizon: 0.0,
+    sunOpacity: 0, moonOpacity: 1,
+    sunLeft: '75%', sunBottom: '58%',
+    moonLeft: '72%', moonBottom: '55%',
+    label: 'NIGHT', icon: '🌙',
+  },
+  morning: {
+    skyClass: 'sky-morning',
+    stars: 0.15, clouds: 0.75, horizon: 0.9,
+    sunOpacity: 1, moonOpacity: 0,
+    sunLeft: '16%', sunBottom: '32%',
+    moonLeft: '16%', moonBottom: '32%',
+    label: 'MORNING', icon: '🌅',
+  },
+  day: {
+    skyClass: 'sky-day',
+    stars: 0.0, clouds: 1.0, horizon: 0.0,
+    sunOpacity: 1, moonOpacity: 0,
+    sunLeft: '62%', sunBottom: '52%',
+    moonLeft: '62%', moonBottom: '52%',
+    label: 'DAYTIME', icon: '☀️',
+  },
+  sunset: {
+    skyClass: 'sky-sunset',
+    stars: 0.25, clouds: 0.7, horizon: 1.0,
+    sunOpacity: 1, moonOpacity: 0,
+    sunLeft: '50%', sunBottom: '22%',
+    moonLeft: '50%', moonBottom: '22%',
+    label: 'SUNSET', icon: '🌄',
+  },
+  evening: {
+    skyClass: 'sky-evening',
+    stars: 0.95, clouds: 0.2, horizon: 0.0,
+    sunOpacity: 0, moonOpacity: 1,
+    sunLeft: '70%', sunBottom: '50%',
+    moonLeft: '68%', moonBottom: '50%',
+    label: 'EVENING', icon: '🌙',
+  },
 };
 
-function getSkyPeriod(hour) {
-  if (hour >= 0  && hour <= 5)  return SKY_CONFIG.night;
-  if (hour >= 6  && hour <= 8)  return SKY_CONFIG.morning;
-  if (hour >= 9  && hour <= 17) return SKY_CONFIG.day;
-  if (hour >= 18 && hour <= 20) return SKY_CONFIG.sunset;
-  return SKY_CONFIG.evening;
+function getPeriod(hour) {
+  if (hour >= 0  && hour <= 5)  return SKY_PERIODS.night;
+  if (hour >= 6  && hour <= 8)  return SKY_PERIODS.morning;
+  if (hour >= 9  && hour <= 17) return SKY_PERIODS.day;
+  if (hour >= 18 && hour <= 20) return SKY_PERIODS.sunset;
+  return SKY_PERIODS.evening;  // 21–23
 }
 
 function updateSky() {
-  const now = new Date();
+  const now  = new Date();
   const hour = now.getHours();
-  const min  = now.getMinutes();
-  const sec  = now.getSeconds();
+  const cfg  = getPeriod(hour);
 
-  const cfg = getSkyPeriod(hour);
-
-  // Sky background
+  // Sky class
   const skyEl = document.getElementById('skyBg');
-  skyEl.className = 'sky-bg ' + cfg.cls;
+  skyEl.className = 'sky-bg ' + cfg.skyClass;
 
-  // Stars visibility
+  // Stars
   document.getElementById('starsEl').style.opacity = cfg.stars;
 
   // Clouds
@@ -84,131 +120,207 @@ function updateSky() {
   // Horizon glow
   document.getElementById('horizonGlow').style.opacity = cfg.horizon;
 
-  // Celestial body
-  const sun  = document.getElementById('sunBody');
-  const moon = document.getElementById('moonBody');
+  // Sun
+  const sun = document.getElementById('sunEl');
+  sun.style.opacity = cfg.sunOpacity;
+  sun.style.left    = cfg.sunLeft;
+  sun.style.bottom  = cfg.sunBottom;
 
-  if (cfg.cls === 'sky-night' || cfg === SKY_CONFIG.evening) {
-    sun.style.opacity  = '0';
-    moon.style.opacity = '1';
-    moon.style.left = cfg.left;
-    moon.style.bottom = cfg.bottom;
-  } else {
-    moon.style.opacity = '0';
-    sun.style.opacity  = '1';
-    sun.style.left  = cfg.left;
-    sun.style.bottom = cfg.bottom;
-  }
+  // Moon
+  const moon = document.getElementById('moonEl');
+  moon.style.opacity = cfg.moonOpacity;
+  moon.style.left    = cfg.moonLeft;
+  moon.style.bottom  = cfg.moonBottom;
 
-  // Update time badge
-  const timeStr = now.toLocaleTimeString('en-PH', { hour:'2-digit', minute:'2-digit' });
-  document.getElementById('timeBadgeTime').textContent = timeStr;
-  document.getElementById('timeBadgePeriod').textContent = cfg.icon + ' ' + cfg.label;
-
-  // Horizon glow color by period
+  // Horizon glow colour
   const hg = document.getElementById('horizonGlow');
-  if (cfg === SKY_CONFIG.morning) {
-    hg.style.background = 'linear-gradient(180deg,transparent 0%,rgba(255,180,80,0.3) 40%,rgba(255,120,30,0.5) 70%,rgba(180,60,0,0.6) 100%)';
-  } else if (cfg === SKY_CONFIG.sunset) {
-    hg.style.background = 'linear-gradient(180deg,transparent 0%,rgba(255,120,0,0.3) 40%,rgba(255,80,0,0.5) 70%,rgba(180,40,0,0.6) 100%)';
+  if (cfg === SKY_PERIODS.morning) {
+    hg.style.background = 'linear-gradient(180deg,transparent 0%,rgba(255,190,80,0.3) 40%,rgba(255,130,30,0.5) 70%,rgba(200,60,0,0.6) 100%)';
+  } else if (cfg === SKY_PERIODS.sunset) {
+    hg.style.background = 'linear-gradient(180deg,transparent 0%,rgba(255,120,0,0.32) 40%,rgba(255,80,0,0.52) 70%,rgba(180,40,0,0.65) 100%)';
   }
+
+  // Time badge
+  const timeStr = now.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('timeBadgeTime').textContent   = timeStr;
+  document.getElementById('timeBadgePeriod').textContent = cfg.icon + ' ' + cfg.label;
+}
+
+function updateClock() {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const el = document.getElementById('timeBadgeTime');
+  if (el) el.textContent = timeStr;
 }
 
 /* ----------------------------------------------------------
-   CHART.JS SETUP
+   MUSIC PLAYER
+   Uses the Web Audio API to generate Minecraft-style
+   chiptune notes (no external file needed).
+   A real .ogg / .mp3 can be swapped in via the <audio> tag.
    ---------------------------------------------------------- */
-const LABELS   = ['12:00','12:05','12:10','12:15','12:20','12:25','12:30','12:35','12:40','12:45','12:50','12:55'];
+let audioCtx    = null;
+let musicPlaying = false;
+let musicInterval = null;
+let volumeLevel   = 0.35;
+
+// Minecraft C418-inspired note sequences (frequencies in Hz)
+const MC_MELODY = [
+  261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 392.00, 349.23,
+  329.63, 293.66, 261.63, 246.94, 220.00, 246.94, 261.63, 293.66,
+  329.63, 392.00, 440.00, 493.88, 440.00, 392.00, 349.23, 329.63,
+  293.66, 261.63, 220.00, 196.00, 220.00, 246.94, 261.63, 293.66,
+];
+let melodyIndex = 0;
+
+const TRACK_NAMES = [
+  'Sweden — C418',
+  'Wet Hands — C418',
+  'Subwoofer Lullaby — C418',
+  'Living Mice — C418',
+  'Mice on Venus — C418',
+];
+let trackIndex = 0;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioCtx;
+}
+
+function playNote(freq, duration, delay) {
+  const ctx  = getAudioCtx();
+  const osc  = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+
+  gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+  gain.gain.linearRampToValueAtTime(volumeLevel * 0.35, ctx.currentTime + delay + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration - 0.05);
+
+  osc.start(ctx.currentTime + delay);
+  osc.stop(ctx.currentTime + delay + duration);
+}
+
+function startMelody() {
+  musicInterval = setInterval(() => {
+    const freq = MC_MELODY[melodyIndex % MC_MELODY.length];
+    playNote(freq, 0.55, 0);
+    // soft harmony
+    playNote(freq * 1.5, 0.45, 0.06);
+    melodyIndex++;
+  }, 600);
+}
+
+function stopMelody() {
+  if (musicInterval) {
+    clearInterval(musicInterval);
+    musicInterval = null;
+  }
+}
+
+function toggleMusic() {
+  const btn    = document.getElementById('musicToggle');
+  const status = document.getElementById('musicStatus');
+  const note   = document.getElementById('musicNote');
+
+  musicPlaying = !musicPlaying;
+
+  if (musicPlaying) {
+    getAudioCtx().resume();
+    startMelody();
+    btn.textContent    = '[ ⏸ PAUSE ]';
+    status.textContent = '♪ PLAYING';
+    note.style.animationPlayState = 'running';
+  } else {
+    stopMelody();
+    btn.textContent    = '[ ▶ PLAY ]';
+    status.textContent = '⏸ PAUSED';
+    note.style.animationPlayState = 'paused';
+  }
+}
+
+function nextTrack() {
+  trackIndex = (trackIndex + 1) % TRACK_NAMES.length;
+  melodyIndex = 0;
+  document.getElementById('musicTitle').textContent = TRACK_NAMES[trackIndex];
+}
+
+function setVolume(val) {
+  volumeLevel = parseFloat(val) / 100;
+  document.getElementById('volDisplay').textContent = val + '%';
+}
+
+/* ----------------------------------------------------------
+   CHARTS
+   ---------------------------------------------------------- */
+const LABELS    = ['12:00','12:05','12:10','12:15','12:20','12:25','12:30','12:35','12:40','12:45','12:50','12:55'];
 const TEMP_DATA = [26.2, 27.1, 27.8, 28.4, 29.0, 28.7, 28.9, 29.2, 28.6, 28.1, 27.9, 28.4];
 const HUM_DATA  = [72, 74, 76, 78, 80, 79, 77, 82, 84, 81, 78, 78];
 
 function buildCharts() {
-  const chartDefaults = {
+  const base = {
     responsive: true,
     maintainAspectRatio: false,
     animation: { duration: 1200, easing: 'easeInOutQuart' },
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: '#000',
-        borderWidth: 2,
+        backgroundColor: '#000', borderWidth: 2,
         titleFont: { family: "'Press Start 2P'", size: 9 },
         bodyFont:  { family: "'Press Start 2P'", size: 9 },
-        padding: 10,
+        padding: 12,
       }
     },
     scales: {
       x: {
-        ticks: { color: '#888', font: { family: "'Press Start 2P'", size: 6 } },
-        grid:  { color: 'rgba(255,255,255,0.05)' },
+        ticks: { color: '#777', font: { family: "'Press Start 2P'", size: 6 } },
+        grid:  { color: 'rgba(255,255,255,0.04)' },
       }
     }
   };
 
-  // Temperature chart
   new Chart(document.getElementById('tempChart'), {
     type: 'line',
     data: {
       labels: LABELS,
       datasets: [{
         data: TEMP_DATA,
-        borderColor: '#ff7043',
-        backgroundColor: 'rgba(255,112,67,0.2)',
-        borderWidth: 2.5,
-        pointRadius: 5,
-        pointBackgroundColor: '#ff7043',
-        pointBorderColor: '#000',
-        pointBorderWidth: 2,
+        borderColor: '#ff7043', backgroundColor: 'rgba(255,112,67,0.18)',
+        borderWidth: 2.5, pointRadius: 5,
+        pointBackgroundColor: '#ff7043', pointBorderColor: '#000', pointBorderWidth: 2,
         fill: true, tension: 0, stepped: true,
       }]
     },
     options: {
-      ...chartDefaults,
-      plugins: {
-        ...chartDefaults.plugins,
-        tooltip: { ...chartDefaults.plugins.tooltip, borderColor: '#ff7043', titleColor: '#ff7043', bodyColor: '#ffee58' }
-      },
-      scales: {
-        x: chartDefaults.scales.x,
-        y: {
-          min: 22, max: 34,
-          ticks: { color: '#ff7043', font: { family: "'Press Start 2P'", size: 6 }, stepSize: 2 },
-          grid: { color: 'rgba(255,112,67,0.1)' }
-        }
-      }
+      ...base,
+      plugins: { ...base.plugins, tooltip: { ...base.plugins.tooltip, borderColor: '#ff7043', titleColor: '#ff7043', bodyColor: '#ffee58' } },
+      scales: { x: base.scales.x, y: { min: 22, max: 34, ticks: { color: '#ff7043', font: { family: "'Press Start 2P'", size: 6 }, stepSize: 2 }, grid: { color: 'rgba(255,112,67,0.08)' } } }
     }
   });
 
-  // Humidity chart
   new Chart(document.getElementById('humChart'), {
     type: 'line',
     data: {
       labels: LABELS,
       datasets: [{
         data: HUM_DATA,
-        borderColor: '#29b6f6',
-        backgroundColor: 'rgba(41,182,246,0.2)',
-        borderWidth: 2.5,
-        pointRadius: 5,
-        pointBackgroundColor: '#29b6f6',
-        pointBorderColor: '#000',
-        pointBorderWidth: 2,
+        borderColor: '#29b6f6', backgroundColor: 'rgba(41,182,246,0.18)',
+        borderWidth: 2.5, pointRadius: 5,
+        pointBackgroundColor: '#29b6f6', pointBorderColor: '#000', pointBorderWidth: 2,
         fill: true, tension: 0, stepped: true,
       }]
     },
     options: {
-      ...chartDefaults,
-      plugins: {
-        ...chartDefaults.plugins,
-        tooltip: { ...chartDefaults.plugins.tooltip, borderColor: '#29b6f6', titleColor: '#29b6f6', bodyColor: '#ffee58' }
-      },
-      scales: {
-        x: chartDefaults.scales.x,
-        y: {
-          min: 70, max: 88,
-          ticks: { color: '#29b6f6', font: { family: "'Press Start 2P'", size: 6 }, stepSize: 2 },
-          grid: { color: 'rgba(41,182,246,0.1)' }
-        }
-      }
+      ...base,
+      plugins: { ...base.plugins, tooltip: { ...base.plugins.tooltip, borderColor: '#29b6f6', titleColor: '#29b6f6', bodyColor: '#ffee58' } },
+      scales: { x: base.scales.x, y: { min: 70, max: 88, ticks: { color: '#29b6f6', font: { family: "'Press Start 2P'", size: 6 }, stepSize: 2 }, grid: { color: 'rgba(41,182,246,0.08)' } } }
     }
   });
 }
@@ -217,35 +329,35 @@ function buildCharts() {
    READINGS TABLE
    ---------------------------------------------------------- */
 function buildReadings() {
-  const tbody   = document.getElementById('readings-body');
-  const times   = [...LABELS].reverse();
+  const tbody    = document.getElementById('readings-body');
+  const reversed = [...LABELS].reverse();
   const statuses = ['NORMAL','NORMAL','HIGH HUM','NORMAL','NORMAL','NORMAL'];
 
-  times.slice(0, 6).forEach((t, i) => {
-    const tr = document.createElement('tr');
-    const isHigh = statuses[i] === 'HIGH HUM';
+  reversed.slice(0, 6).forEach((t, i) => {
+    const tr   = document.createElement('tr');
+    const high = statuses[i] === 'HIGH HUM';
     tr.innerHTML = `
       <td>${t}</td>
       <td>${TEMP_DATA[LABELS.length - 1 - i].toFixed(1)}</td>
       <td>${HUM_DATA[LABELS.length - 1 - i]}</td>
-      <td style="color:${isHigh ? '#ff7043' : '#66bb6a'}">${statuses[i]}</td>
+      <td style="color:${high ? '#ff7043' : '#66bb6a'}">${statuses[i]}</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
 /* ----------------------------------------------------------
-   SUGGESTIONS SYSTEM
+   SUGGESTIONS
    ---------------------------------------------------------- */
 const ALL_SUGGESTIONS = [
-  { emoji:'👕', title:'WEAR LIGHT CLOTHES', badge:'COMFORT',      accent:'#ffee58', desc:'Temp is 28.4°C — wear lightweight, breathable clothing. Cotton or linen works best.',       tip:'TIP: Light colors reflect heat. Avoid dark fabric outdoors.' },
-  { emoji:'💧', title:'STAY HYDRATED',      badge:'HEALTH',       accent:'#29b6f6', desc:'High humidity (78%) slows sweat evaporation. Drink water every 20 mins.',                   tip:'TIP: Add a pinch of salt to water for better electrolyte balance.' },
-  { emoji:'🪟', title:'OPEN YOUR WINDOWS',  badge:'VENTILATION',  accent:'#66bb6a', desc:'Humidity is elevated indoors. Open windows to improve airflow and reduce stuffiness.',       tip:'TIP: Best ventilation time is early morning when air is cooler.' },
-  { emoji:'🌂', title:'BRING AN UMBRELLA',  badge:'WEATHER PREP', accent:'#ce93d8', desc:'High humidity often precedes rain. Carry an umbrella just in case.',                        tip:'TIP: 78%+ humidity + rising temp = likely afternoon rain.' },
-  { emoji:'❄️', title:'USE A FAN OR AC',    badge:'COOLING',      accent:'#80deea', desc:'Heat index is above comfortable range. A fan or AC will significantly reduce discomfort.', tip:'TIP: Set AC to 24–26°C to save power while staying cool.' },
-  { emoji:'🏠', title:'STAY INDOORS 12–3PM',badge:'SAFETY',       accent:'#ffb74d', desc:'Peak heat hours are midday. Avoid outdoor activities between 12PM and 3PM.',               tip:'TIP: If outside, seek shade and wear a hat or cap.' },
-  { emoji:'🌿', title:'WATER YOUR PLANTS',  badge:'GARDEN',       accent:'#aed581', desc:'Hot and humid weather increases plant transpiration. Water in the evening.',               tip:'TIP: Avoid watering under direct sun — leaves can burn.' },
-  { emoji:'😴', title:'COOL DOWN BEFORE SLEEP', badge:'SLEEP',   accent:'#9fa8da', desc:'High overnight humidity disrupts sleep. Cool your room to 22–24°C before bed.',            tip:'TIP: A damp cloth on forehead lowers body temp quickly.' },
+  { emoji:'👕', title:'WEAR LIGHT CLOTHES',  badge:'COMFORT',     accent:'#ffee58', desc:'Temp is 28.4°C — wear lightweight, breathable clothing. Cotton or linen works best.',       tip:'TIP: Light colors reflect heat. Avoid dark fabric outdoors.' },
+  { emoji:'💧', title:'STAY HYDRATED',        badge:'HEALTH',      accent:'#29b6f6', desc:'High humidity (78%) slows sweat evaporation. Drink water every 20 mins.',                   tip:'TIP: Add a pinch of salt to water for better electrolyte balance.' },
+  { emoji:'🪟', title:'OPEN YOUR WINDOWS',    badge:'VENTILATION', accent:'#66bb6a', desc:'Humidity is elevated indoors. Open windows to improve airflow and reduce stuffiness.',       tip:'TIP: Best ventilation time is early morning when air is cooler.' },
+  { emoji:'🌂', title:'BRING AN UMBRELLA',    badge:'WEATHER PREP',accent:'#ce93d8', desc:'High humidity often precedes rain. Carry an umbrella just in case.',                        tip:'TIP: 78%+ humidity + rising temp = likely afternoon rain.' },
+  { emoji:'❄️', title:'USE A FAN OR AC',      badge:'COOLING',     accent:'#80deea', desc:'Heat index is above comfortable range. A fan or AC will significantly reduce discomfort.', tip:'TIP: Set AC to 24–26°C to save power while staying cool.' },
+  { emoji:'🏠', title:'STAY INDOORS 12–3PM', badge:'SAFETY',      accent:'#ffb74d', desc:'Peak heat hours are midday. Avoid outdoor activities between 12PM and 3PM.',               tip:'TIP: If outside, seek shade and wear a hat or cap.' },
+  { emoji:'🌿', title:'WATER YOUR PLANTS',    badge:'GARDEN',      accent:'#aed581', desc:'Hot and humid weather increases plant transpiration. Water in the evening.',               tip:'TIP: Avoid watering under direct sun — leaves can burn.' },
+  { emoji:'😴', title:'COOL DOWN FOR SLEEP',  badge:'SLEEP',       accent:'#9fa8da', desc:'High overnight humidity disrupts sleep. Cool your room to 22–24°C before bed.',            tip:'TIP: A damp cloth on forehead lowers body temp quickly.' },
 ];
 
 function shuffle(arr) {
@@ -285,44 +397,33 @@ function refreshSuggestions() {
   }, 220);
 }
 
-/* ----------------------------------------------------------
-   DISMISS ALERT
-   ---------------------------------------------------------- */
 function dismissAlert() {
   const el = document.getElementById('alertToast');
-  if (el) el.style.display = 'none';
-}
-
-/* ----------------------------------------------------------
-   CLOCK UPDATE (live time display)
-   ---------------------------------------------------------- */
-function updateClock() {
-  const now = new Date();
-  const timeStr = now.toLocaleTimeString('en-PH', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
-  const el = document.getElementById('timeBadgeTime');
-  if (el) el.textContent = timeStr;
+  if (el) {
+    el.style.transition = 'opacity 0.3s, transform 0.3s';
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateY(-8px)';
+    setTimeout(() => el.remove(), 350);
+  }
 }
 
 /* ----------------------------------------------------------
    INIT
    ---------------------------------------------------------- */
 window.addEventListener('DOMContentLoaded', () => {
-  // 1. Loading screen
   startLoadingScreen();
 
-  // 2. Sky on load + every minute
+  // Sky runs immediately and then every 30 seconds (more responsive)
   updateSky();
-  setInterval(updateSky, 60 * 1000);
+  setInterval(updateSky, 30 * 1000);
 
-  // 3. Clock every second
+  // Clock ticks every second
   setInterval(updateClock, 1000);
 
-  // 4. Charts
   buildCharts();
-
-  // 5. Readings table
   buildReadings();
-
-  // 6. Suggestions
   renderSuggestions();
+
+  // Set initial music track name
+  document.getElementById('musicTitle').textContent = TRACK_NAMES[0];
 });
