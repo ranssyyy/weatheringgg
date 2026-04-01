@@ -154,80 +154,33 @@ function updateClock() {
 }
 
 /* ----------------------------------------------------------
-   MUSIC PLAYER — Pigstep Stereo Mix (Web Audio synth)
-   Pigstep-inspired rhythm with chiptune bass + melody
+   MUSIC PLAYER — Real MP3 (Pigstep Stereo Mix)
+   Uses HTML5 Audio element for actual MP3 playback
    ---------------------------------------------------------- */
-let audioCtx     = null;
+let pigstepAudio = null;
 let musicPlaying = false;
-let musicInterval = null;
-let volumeLevel   = 0.35;
 
-// Pigstep-inspired note pattern (Lena Raine)
-const PIGSTEP_MELODY = [
-  392.00, 349.23, 329.63, 293.66, 261.63, 293.66, 329.63, 349.23,
-  392.00, 392.00, 440.00, 392.00, 349.23, 329.63, 349.23, 392.00,
-  523.25, 493.88, 440.00, 392.00, 349.23, 392.00, 440.00, 493.88,
-  523.25, 587.33, 523.25, 493.88, 440.00, 392.00, 349.23, 329.63,
-];
-const PIGSTEP_BASS = [
-  130.81, 130.81, 146.83, 146.83, 123.47, 123.47, 130.81, 130.81,
-  130.81, 146.83, 164.81, 146.83, 130.81, 123.47, 130.81, 146.83,
-];
-let melodyIndex = 0;
-let bassIndex   = 0;
-
-function getAudioCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return audioCtx;
-}
-
-function playNote(freq, duration, delay, type = 'sine', vol = 1) {
-  const ctx  = getAudioCtx();
-  const osc  = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.connect(gain); gain.connect(ctx.destination);
-  osc.type = type;
-  osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-  gain.gain.setValueAtTime(0, ctx.currentTime + delay);
-  gain.gain.linearRampToValueAtTime(volumeLevel * vol * 0.4, ctx.currentTime + delay + 0.03);
-  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration - 0.04);
-  osc.start(ctx.currentTime + delay);
-  osc.stop(ctx.currentTime + delay + duration);
-}
-
-function startMelody() {
-  const BPM = 140;
-  const beat = 60 / BPM;
-  musicInterval = setInterval(() => {
-    // melody (sine — bright)
-    playNote(PIGSTEP_MELODY[melodyIndex % PIGSTEP_MELODY.length], beat * 0.85, 0, 'sine', 0.8);
-    // bass (square — punchy, every 2 beats)
-    if (melodyIndex % 2 === 0)
-      playNote(PIGSTEP_BASS[(bassIndex++) % PIGSTEP_BASS.length], beat * 1.6, 0, 'square', 0.5);
-    // hi-hat click (very short sawtooth)
-    if (melodyIndex % 4 === 0)
-      playNote(880, 0.04, 0, 'sawtooth', 0.15);
-    melodyIndex++;
-  }, beat * 1000);
-}
-
-function stopMelody() {
-  if (musicInterval) { clearInterval(musicInterval); musicInterval = null; }
+function initAudio() {
+  if (!pigstepAudio) {
+    pigstepAudio = new Audio('951722_Pigstep-Remix.mp3');
+    pigstepAudio.loop   = true;
+    pigstepAudio.volume = 0.35;
+  }
 }
 
 function toggleMusic() {
+  initAudio();
   const btn    = document.getElementById('musicToggle');
   const status = document.getElementById('musicStatus');
   const note   = document.getElementById('musicNote');
   musicPlaying = !musicPlaying;
   if (musicPlaying) {
-    getAudioCtx().resume();
-    startMelody();
+    pigstepAudio.play().catch(e => console.warn('Audio play blocked:', e));
     btn.textContent    = '[ ⏸ PAUSE ]';
     status.textContent = '♪ PLAYING';
     note.style.animationPlayState = 'running';
   } else {
-    stopMelody();
+    pigstepAudio.pause();
     btn.textContent    = '[ ▶ PLAY ]';
     status.textContent = '⏸ PAUSED';
     note.style.animationPlayState = 'paused';
@@ -235,7 +188,8 @@ function toggleMusic() {
 }
 
 function setVolume(val) {
-  volumeLevel = parseFloat(val) / 100;
+  initAudio();
+  pigstepAudio.volume = parseFloat(val) / 100;
   document.getElementById('volDisplay').textContent = val + '%';
 }
 
@@ -299,20 +253,28 @@ function buildCharts() {
     },
     scales: {
       x: { ticks: { color: '#777', font: { family: "'Press Start 2P'", size: 6 }, maxTicksLimit: 8 }, grid: { color: 'rgba(255,255,255,0.04)' } },
-      y: { ticks: { color, font: { family: "'Press Start 2P'", size: 6 } }, grid: { color: `rgba(${borderColor},0.08)` } }
+      y: { ticks: { color, font: { family: "'Press Start 2P'", size: 6 }, stepSize: 2 }, grid: { color: `rgba(${borderColor},0.08)` } }
     }
   });
 
+  const tempOpts = baseOpts('#ff7043', '255,112,67');
+  tempOpts.scales.y.min = 24;
+  tempOpts.scales.y.max = 40;
+  tempOpts.scales.y.ticks.stepSize = 2;
   tempChartRef = new Chart(document.getElementById('tempChart'), {
     type: 'line',
     data: { labels: [], datasets: [{ data: [], borderColor: '#ff7043', backgroundColor: 'rgba(255,112,67,0.18)', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#ff7043', pointBorderColor: '#000', pointBorderWidth: 2, fill: true, tension: 0.35 }] },
-    options: baseOpts('#ff7043', '255,112,67')
+    options: tempOpts
   });
 
+  const humOpts = baseOpts('#29b6f6', '41,182,246');
+  humOpts.scales.y.min = 49;
+  humOpts.scales.y.max = 90;
+  humOpts.scales.y.ticks.stepSize = 5;
   humChartRef = new Chart(document.getElementById('humChart'), {
     type: 'line',
     data: { labels: [], datasets: [{ data: [], borderColor: '#29b6f6', backgroundColor: 'rgba(41,182,246,0.18)', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#29b6f6', pointBorderColor: '#000', pointBorderWidth: 2, fill: true, tension: 0.35 }] },
-    options: baseOpts('#29b6f6', '41,182,246')
+    options: humOpts
   });
 }
 

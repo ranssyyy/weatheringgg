@@ -437,34 +437,34 @@
 </div><!-- end ground-chars -->
 
 <!-- ============================================================
-     TIME BADGE
+     TIME BADGE + MUSIC PLAYER (stacked top-right)
      ============================================================ -->
-<div class="time-badge">
-  <div id="timeBadgeTime">--:--:--</div>
-  <div class="time-period" id="timeBadgePeriod">⛅ LOADING...</div>
-</div>
-
-<!-- ============================================================
-     MUSIC PLAYER
-     ============================================================ -->
-<div class="music-player">
-  <div id="musicNote" class="music-note">♪</div>
-  <div class="music-info">
-    <div class="music-title" id="musicTitle">Sweden — C418</div>
-    <div class="music-status" id="musicStatus">⏸ PAUSED</div>
-    <div class="music-vol">
-      VOL:
-      <input type="range" class="vol-bar" id="volSlider"
-             min="0" max="100" value="35" step="1"
-             oninput="setVolume(this.value)"
-             style="width:60px;cursor:pointer;"/>
-      <span id="volDisplay">35%</span>
+<div class="top-right-stack">
+  <div class="time-badge">
+    <div id="timeBadgeTime">--:--:--</div>
+    <div class="time-period" id="timeBadgePeriod">⛅ LOADING...</div>
+  </div>
+  <div class="music-player">
+    <div id="musicNote" class="music-note">♪</div>
+    <div class="music-info">
+      <div class="music-title" id="musicTitle">Pigstep — Lena Raine</div>
+      <div class="music-status" id="musicStatus">⏸ PAUSED</div>
+      <div class="music-vol">
+        VOL:
+        <input type="range" class="vol-bar" id="volSlider"
+               min="0" max="100" value="35" step="1"
+               oninput="setVolume(this.value)"
+               style="width:60px;cursor:pointer;"/>
+        <span id="volDisplay">35%</span>
+      </div>
+    </div>
+    <div>
+      <button class="music-btn" id="musicToggle" onclick="toggleMusic()">[ ▶ PLAY ]</button>
     </div>
   </div>
-  <div style="display:flex;flex-direction:column;gap:5px;">
-    <button class="music-btn" id="musicToggle" onclick="toggleMusic()">[ ▶ PLAY ]</button>
-  </div>
 </div>
+
+
 
 <!-- ============================================================
      MAIN DASHBOARD CONTENT
@@ -623,7 +623,7 @@
 
   <div class="footer">
     ⛏ RANSY WEATHER DASHBOARD · ESP32 + DHT11 · MINECRAFT EDITION<br>
-    MINECRAFT THEME · UPDATES EVERY 5 SEC ⛏
+    👻 GHAST IS WATCHING · 🚶 STEVE &amp; ALEX ARE WALKING · ♪ C418 MUSIC · UPDATES EVERY 5 SEC ⛏
   </div>
 
 </div><!-- end wrapper -->
