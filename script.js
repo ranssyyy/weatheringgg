@@ -51,61 +51,59 @@ function startLoadingScreen() {
    hour 18-20 → sunset
    hour 21-23 → evening/night
    ---------------------------------------------------------- */
-const SKY_PERIODS = {
-  night: {
-    skyClass: 'sky-night',
-    stars: 1.0, clouds: 0.25, horizon: 0.0,
-    sunOpacity: 0, moonOpacity: 1,
-    sunLeft: '75%', sunBottom: '58%',
-    moonLeft: '72%', moonBottom: '55%',
-    label: 'NIGHT', icon: '🌙',
-  },
-  morning: {
-    skyClass: 'sky-morning',
-    stars: 0.15, clouds: 0.75, horizon: 0.9,
-    sunOpacity: 1, moonOpacity: 0,
-    sunLeft: '16%', sunBottom: '32%',
-    moonLeft: '16%', moonBottom: '32%',
-    label: 'MORNING', icon: '🌅',
-  },
-  day: {
-    skyClass: 'sky-day',
-    stars: 0.0, clouds: 1.0, horizon: 0.0,
-    sunOpacity: 1, moonOpacity: 0,
-    sunLeft: '62%', sunBottom: '52%',
-    moonLeft: '62%', moonBottom: '52%',
-    label: 'DAYTIME', icon: '☀️',
-  },
-  sunset: {
-    skyClass: 'sky-sunset',
-    stars: 0.25, clouds: 0.7, horizon: 1.0,
-    sunOpacity: 1, moonOpacity: 0,
-    sunLeft: '50%', sunBottom: '22%',
-    moonLeft: '50%', moonBottom: '22%',
-    label: 'SUNSET', icon: '🌄',
-  },
-  evening: {
-    skyClass: 'sky-evening',
-    stars: 0.95, clouds: 0.2, horizon: 0.0,
-    sunOpacity: 0, moonOpacity: 1,
-    sunLeft: '70%', sunBottom: '50%',
-    moonLeft: '68%', moonBottom: '50%',
-    label: 'EVENING', icon: '🌙',
-  },
-};
+/* ----------------------------------------------------------
+   TIME-BASED SKY — smooth sun/moon arc across the sky
+   Sun rises at 6am (left horizon) → peaks noon (center top) → sets 6pm (right horizon)
+   Moon rises 6pm → peaks midnight → sets 6am
+   ---------------------------------------------------------- */
 
-function getPeriod(hour) {
-  if (hour >= 0  && hour <= 5)  return SKY_PERIODS.night;
-  if (hour >= 6  && hour <= 8)  return SKY_PERIODS.morning;
-  if (hour >= 9  && hour <= 17) return SKY_PERIODS.day;
-  if (hour >= 18 && hour <= 20) return SKY_PERIODS.sunset;
-  return SKY_PERIODS.evening;  // 21–23
+function getSkyPeriodName(hour) {
+  if (hour >= 0  && hour <= 5)  return { label:'NIGHTTIME', icon:'🌙', skyClass:'sky-night',   stars:1.0,  clouds:0.25, horizon:0.0, sunVis:0, moonVis:1 };
+  if (hour >= 6  && hour <= 8)  return { label:'MORNING',   icon:'🌅', skyClass:'sky-morning',  stars:0.15, clouds:0.75, horizon:0.9, sunVis:1, moonVis:0 };
+  if (hour >= 9  && hour <= 17) return { label:'DAYTIME',   icon:'☀️', skyClass:'sky-day',      stars:0.0,  clouds:1.0,  horizon:0.0, sunVis:1, moonVis:0 };
+  if (hour >= 18 && hour <= 20) return { label:'SUNSET',    icon:'🌄', skyClass:'sky-sunset',   stars:0.25, clouds:0.7,  horizon:1.0, sunVis:1, moonVis:0 };
+  return                               { label:'NIGHTTIME', icon:'🌙', skyClass:'sky-evening',  stars:0.95, clouds:0.2,  horizon:0.0, sunVis:0, moonVis:1 };
+}
+
+/* Compute sun/moon position from time
+   Sun arc: 6am=left(8%) → noon=center-top(50%,75%) → 6pm=right(92%)
+   Moon arc: 6pm=left(8%) → midnight=center-top(50%,72%) → 6am=right(92%) */
+function getCelestialPos(now) {
+  const h = now.getHours();
+  const m = now.getMinutes();
+  const totalMins = h * 60 + m;
+
+  // Sun: active 6am(360) to 6pm(1080), arc across sky
+  const sunStart = 6 * 60, sunEnd = 18 * 60;
+  let sunLeft = '50%', sunBottom = '-10%';
+  if (totalMins >= sunStart && totalMins <= sunEnd) {
+    const t = (totalMins - sunStart) / (sunEnd - sunStart); // 0→1
+    const angle = Math.PI * t; // 0 → PI (left to right arc)
+    const lx = 8 + t * 84; // 8% to 92%
+    const by = 20 + Math.sin(angle) * 55; // bottom: rises to 75% at noon
+    sunLeft   = lx.toFixed(1) + '%';
+    sunBottom = by.toFixed(1) + '%';
+  }
+
+  // Moon: active 6pm(1080) to 6am next day(360+1440=1800), arc across sky
+  // Normalise: 6pm=0, midnight=360, 6am=720
+  let moonMins = totalMins >= 18 * 60 ? totalMins - 18 * 60 : totalMins + 6 * 60;
+  const moonDuration = 12 * 60;
+  const mt = Math.min(moonMins / moonDuration, 1);
+  const moonAngle = Math.PI * mt;
+  const mlx = 8 + mt * 84;
+  const mby = 18 + Math.sin(moonAngle) * 50;
+  const moonLeft   = mlx.toFixed(1) + '%';
+  const moonBottom = mby.toFixed(1) + '%';
+
+  return { sunLeft, sunBottom, moonLeft, moonBottom };
 }
 
 function updateSky() {
   const now  = new Date();
   const hour = now.getHours();
-  const cfg  = getPeriod(hour);
+  const cfg  = getSkyPeriodName(hour);
+  const pos  = getCelestialPos(now);
 
   // Sky class
   const skyEl = document.getElementById('skyBg');
@@ -118,38 +116,41 @@ function updateSky() {
   document.querySelectorAll('.cloud').forEach(c => c.style.opacity = cfg.clouds);
 
   // Horizon glow
-  document.getElementById('horizonGlow').style.opacity = cfg.horizon;
-
-  // Sun
-  const sun = document.getElementById('sunEl');
-  sun.style.opacity = cfg.sunOpacity;
-  sun.style.left    = cfg.sunLeft;
-  sun.style.bottom  = cfg.sunBottom;
-
-  // Moon
-  const moon = document.getElementById('moonEl');
-  moon.style.opacity = cfg.moonOpacity;
-  moon.style.left    = cfg.moonLeft;
-  moon.style.bottom  = cfg.moonBottom;
-
-  // Horizon glow colour
   const hg = document.getElementById('horizonGlow');
-  if (cfg === SKY_PERIODS.morning) {
+  hg.style.opacity = cfg.horizon;
+  if (cfg.skyClass === 'sky-morning') {
     hg.style.background = 'linear-gradient(180deg,transparent 0%,rgba(255,190,80,0.3) 40%,rgba(255,130,30,0.5) 70%,rgba(200,60,0,0.6) 100%)';
-  } else if (cfg === SKY_PERIODS.sunset) {
+  } else if (cfg.skyClass === 'sky-sunset') {
     hg.style.background = 'linear-gradient(180deg,transparent 0%,rgba(255,120,0,0.32) 40%,rgba(255,80,0,0.52) 70%,rgba(180,40,0,0.65) 100%)';
   }
 
+  // Sun — smooth position
+  const sun = document.getElementById('sunEl');
+  sun.style.opacity = cfg.sunVis;
+  sun.style.left    = pos.sunLeft;
+  sun.style.bottom  = pos.sunBottom;
+
+  // Moon — smooth position
+  const moon = document.getElementById('moonEl');
+  moon.style.opacity = cfg.moonVis;
+  moon.style.left    = pos.moonLeft;
+  moon.style.bottom  = pos.moonBottom;
+
   // Time badge
-  const timeStr = now.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' });
-  document.getElementById('timeBadgeTime').textContent   = timeStr;
-  document.getElementById('timeBadgePeriod').textContent = cfg.icon + ' ' + cfg.label;
+  updateClock();
+  const periodEl = document.getElementById('timeBadgePeriod2');
+  if (periodEl) periodEl.textContent = cfg.icon + ' ' + cfg.label;
 }
 
 function updateClock() {
   const now = new Date();
-  const timeStr = now.toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  const el = document.getElementById('timeBadgeTime');
+  let h = now.getHours();
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const s = String(now.getSeconds()).padStart(2, '0');
+  const ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  const timeStr = `${h}:${m}:${s} ${ap}`;
+  const el = document.getElementById('timeBadgeTime2');
   if (el) el.textContent = timeStr;
 }
 
@@ -208,8 +209,13 @@ let humChartRef  = null;
    TIME HELPERS — Philippine Time UTC+8
    ---------------------------------------------------------- */
 function toPH(str) {
-  const fixed = str.replace(' ', 'T').replace(/\.\d+$/, '') + 'Z';
-  return new Date(new Date(fixed).getTime() + 8 * 3600000);
+  // Strip microseconds AND any timezone offset (+00, +00:00, -xx:xx, Z), add Z for UTC parse
+  const clean = str
+    .replace(' ', 'T')
+    .replace(/\.\d+/, '')
+    .replace(/[+-]\d{2}:?\d{2}$/, '')
+    .replace(/Z$/, '');
+  return new Date(new Date(clean + 'Z').getTime() + 8 * 3600000);
 }
 function fmtTime(str) {
   const d = toPH(str);
@@ -237,6 +243,7 @@ function buildCharts() {
     responsive: true,
     maintainAspectRatio: false,
     animation: { duration: 900, easing: 'easeInOutCubic' },
+    layout: { padding: { left: 8, right: 4, top: 4, bottom: 4 } },
     transitions: {
       active: { animation: { duration: 400 } }
     },
@@ -268,7 +275,7 @@ function buildCharts() {
   });
 
   const humOpts = baseOpts('#29b6f6', '41,182,246');
-  humOpts.scales.y.min = 49;
+  humOpts.scales.y.min = 40;
   humOpts.scales.y.max = 90;
   humOpts.scales.y.ticks.stepSize = 5;
   humChartRef = new Chart(document.getElementById('humChart'), {
@@ -310,9 +317,11 @@ async function fetchSensorData() {
     if (dot)    { dot.className = 'live-dot'; }
     if (status) { status.textContent = '● LIVE · ESP32 CONNECTED'; }
 
-    // Last update time
-    const lu = document.getElementById('lastUpdate');
-    if (lu) lu.textContent = fmtTime(data[0].created_at);
+    // Last update time box
+    const lu    = document.getElementById('lastUpdate');
+    const luSub = document.getElementById('lastUpdateSub');
+    if (lu)    lu.textContent    = fmtTime(data[0].created_at);
+    if (luSub) luSub.textContent = 'ESP32 CONNECTED';
 
     // ── Latest reading → cards ────────────────────────────
     const latest = data[0];
@@ -381,7 +390,10 @@ async function fetchSensorData() {
     const dot    = document.getElementById('liveDot');
     const status = document.getElementById('liveStatus');
     if (dot)    { dot.className = 'live-dot offline'; }
-    if (status) { status.textContent = '● OFFLINE · CHECK CONNECTION'; }
+    if (status) { status.textContent = '● DISCONNECTED · CHECK ESP32'; }
+    // Box 2: update sub-label to show ESP32 is offline (time stays as last known)
+    const luSub = document.getElementById('lastUpdateSub');
+    if (luSub) luSub.textContent = 'ESP32 OFFLINE';
   }
 }
 
@@ -493,9 +505,9 @@ function dismissAlert() {
 window.addEventListener('DOMContentLoaded', () => {
   startLoadingScreen();
 
-  // Sky + clock
+  // Sky + clock — sky updates every 60s (sun moves per-minute), clock every 1s
   updateSky();
-  setInterval(updateSky,   30 * 1000);
+  setInterval(updateSky,   60 * 1000);
   setInterval(updateClock, 1000);
 
   // Build empty charts (data loaded by Supabase)

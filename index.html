@@ -84,23 +84,26 @@
 "></div>
 
 <!-- Clouds -->
-<svg class="cloud" style="top:12%;left:-160px;animation-duration:44s;width:130px;height:34px;"
-     viewBox="0 0 130 34" xmlns="http://www.w3.org/2000/svg">
-  <rect x="16" y="18" width="98" height="16" fill="rgba(255,175,95,0.26)"/>
-  <rect x="28" y="8"  width="62" height="16" fill="rgba(255,175,95,0.26)"/>
-  <rect x="44" y="0"  width="36" height="12" fill="rgba(255,175,95,0.26)"/>
+<svg class="cloud" style="top:8%;left:-160px;animation-duration:44s;width:150px;height:44px;"
+     viewBox="0 0 150 44" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="24" width="130" height="20" fill="rgba(255,255,255,0.72)"/>
+  <rect x="24" y="10"  width="80"  height="22" fill="rgba(255,255,255,0.72)"/>
+  <rect x="44" y="0"   width="50"  height="16" fill="rgba(255,255,255,0.72)"/>
+  <rect x="10" y="24" width="130" height="3"  fill="rgba(255,255,255,0.9)"/>
 </svg>
-<svg class="cloud" style="top:20%;left:-150px;animation-duration:60s;animation-delay:-26s;width:100px;height:26px;"
-     viewBox="0 0 100 26" xmlns="http://www.w3.org/2000/svg">
-  <rect x="0"  y="14" width="100" height="12" fill="rgba(255,155,75,0.2)"/>
-  <rect x="16" y="5"  width="52"  height="12" fill="rgba(255,155,75,0.2)"/>
-  <rect x="30" y="0"  width="28"  height="10" fill="rgba(255,155,75,0.2)"/>
+<svg class="cloud" style="top:18%;left:-150px;animation-duration:60s;animation-delay:-26s;width:120px;height:34px;"
+     viewBox="0 0 120 34" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0"  y="18" width="120" height="16" fill="rgba(240,240,255,0.68)"/>
+  <rect x="16" y="6"  width="68"  height="18" fill="rgba(240,240,255,0.68)"/>
+  <rect x="32" y="0"  width="40"  height="14" fill="rgba(240,240,255,0.68)"/>
+  <rect x="0"  y="18" width="120" height="3"  fill="rgba(255,255,255,0.85)"/>
 </svg>
-<svg class="cloud" style="top:6%;left:-220px;animation-duration:76s;animation-delay:-40s;width:148px;height:38px;"
-     viewBox="0 0 148 38" xmlns="http://www.w3.org/2000/svg">
-  <rect x="10" y="22" width="128" height="16" fill="rgba(195,135,255,0.2)"/>
-  <rect x="26" y="10" width="76"  height="16" fill="rgba(195,135,255,0.2)"/>
-  <rect x="46" y="1"  width="44"  height="14" fill="rgba(195,135,255,0.2)"/>
+<svg class="cloud" style="top:4%;left:-220px;animation-duration:76s;animation-delay:-40s;width:170px;height:48px;"
+     viewBox="0 0 170 48" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8"  y="28" width="154" height="20" fill="rgba(220,220,255,0.65)"/>
+  <rect x="22" y="12" width="100" height="24" fill="rgba(220,220,255,0.65)"/>
+  <rect x="48" y="0"  width="60"  height="18" fill="rgba(220,220,255,0.65)"/>
+  <rect x="8"  y="28" width="154" height="3"  fill="rgba(255,255,255,0.82)"/>
 </svg>
 
 <!-- ============================================================
@@ -212,258 +215,266 @@
 </div>
 
 <!-- ============================================================
-     TERRAIN — layered 3D pixel blocks
+     TERRAIN — layered 3D pixel blocks with BIGGER TREES
      ============================================================ -->
 <svg class="terrain" xmlns="http://www.w3.org/2000/svg"
-     viewBox="0 0 1000 150" width="100%" height="150" preserveAspectRatio="none">
+     viewBox="0 0 1000 200" width="100%" height="200" preserveAspectRatio="none">
   <!-- deep bedrock -->
-  <rect x="0"   y="118" width="1000" height="32" fill="#0a0a0a"/>
+  <rect x="0"   y="170" width="1000" height="30" fill="#0a0a0a"/>
   <!-- stone layer -->
-  <rect x="0"   y="106" width="1000" height="14" fill="#1c1c1c"/>
-  <!-- stone bricks pattern -->
-  <rect x="0"   y="106" width="50"  height="12" fill="#222" stroke="#111" stroke-width="0.5"/>
-  <rect x="50"  y="106" width="50"  height="12" fill="#1e1e1e" stroke="#111" stroke-width="0.5"/>
-  <rect x="100" y="106" width="50"  height="12" fill="#222" stroke="#111" stroke-width="0.5"/>
-  <rect x="150" y="106" width="50"  height="12" fill="#1e1e1e" stroke="#111" stroke-width="0.5"/>
-  <rect x="25"  y="118" width="50"  height="10" fill="#1e1e1e" stroke="#111" stroke-width="0.5"/>
-  <rect x="75"  y="118" width="50"  height="10" fill="#222" stroke="#111" stroke-width="0.5"/>
+  <rect x="0"   y="156" width="1000" height="16" fill="#1c1c1c"/>
+  <rect x="0"   y="156" width="60"  height="14" fill="#222" stroke="#111" stroke-width="0.5"/>
+  <rect x="60"  y="156" width="60"  height="14" fill="#1e1e1e" stroke="#111" stroke-width="0.5"/>
+  <rect x="120" y="156" width="60"  height="14" fill="#222" stroke="#111" stroke-width="0.5"/>
+  <rect x="30"  y="170" width="60"  height="10" fill="#1e1e1e" stroke="#111" stroke-width="0.5"/>
+  <rect x="90"  y="170" width="60"  height="10" fill="#222" stroke="#111" stroke-width="0.5"/>
   <!-- dirt layer -->
-  <rect x="0"   y="98"  width="1000" height="12" fill="#3d2010"/>
+  <rect x="0"   y="144" width="1000" height="14" fill="#3d2010"/>
   <!-- grass base -->
-  <rect x="0"   y="88"  width="1000" height="12" fill="#1e4010"/>
-  <!-- bumpy grass terrain -->
-  <rect x="0"   y="78" width="50"  height="20" fill="#2a5516"/>
-  <rect x="50"  y="86" width="50"  height="12" fill="#2a5516"/>
-  <rect x="100" y="74" width="60"  height="24" fill="#2a5516"/>
-  <rect x="160" y="66" width="50"  height="32" fill="#2a5516"/>
-  <rect x="210" y="76" width="65"  height="22" fill="#2a5516"/>
-  <rect x="275" y="86" width="45"  height="12" fill="#2a5516"/>
-  <rect x="320" y="74" width="48"  height="24" fill="#2a5516"/>
-  <rect x="368" y="64" width="60"  height="34" fill="#2a5516"/>
-  <rect x="428" y="76" width="48"  height="22" fill="#2a5516"/>
-  <rect x="476" y="86" width="60"  height="12" fill="#2a5516"/>
-  <rect x="536" y="66" width="44"  height="32" fill="#2a5516"/>
-  <rect x="580" y="76" width="78"  height="22" fill="#2a5516"/>
-  <rect x="658" y="86" width="44"  height="12" fill="#2a5516"/>
-  <rect x="702" y="74" width="60"  height="24" fill="#2a5516"/>
-  <rect x="762" y="64" width="44"  height="34" fill="#2a5516"/>
-  <rect x="806" y="76" width="60"  height="22" fill="#2a5516"/>
-  <rect x="866" y="86" width="44"  height="12" fill="#2a5516"/>
-  <rect x="910" y="64" width="44"  height="34" fill="#2a5516"/>
-  <rect x="954" y="76" width="46"  height="22" fill="#2a5516"/>
+  <rect x="0"   y="132" width="1000" height="14" fill="#1e4010"/>
+  <!-- bumpy grass blocks -->
+  <rect x="0"   y="118" width="60"  height="24" fill="#2a5516"/>
+  <rect x="60"  y="126" width="60"  height="16" fill="#2a5516"/>
+  <rect x="120" y="112" width="70"  height="30" fill="#2a5516"/>
+  <rect x="190" y="100" width="60"  height="42" fill="#2a5516"/>
+  <rect x="250" y="114" width="70"  height="28" fill="#2a5516"/>
+  <rect x="320" y="126" width="50"  height="16" fill="#2a5516"/>
+  <rect x="370" y="110" width="55"  height="32" fill="#2a5516"/>
+  <rect x="425" y="96"  width="65"  height="46" fill="#2a5516"/>
+  <rect x="490" y="114" width="55"  height="28" fill="#2a5516"/>
+  <rect x="545" y="126" width="65"  height="16" fill="#2a5516"/>
+  <rect x="610" y="98"  width="50"  height="44" fill="#2a5516"/>
+  <rect x="660" y="114" width="80"  height="28" fill="#2a5516"/>
+  <rect x="740" y="126" width="50"  height="16" fill="#2a5516"/>
+  <rect x="790" y="110" width="65"  height="32" fill="#2a5516"/>
+  <rect x="855" y="96"  width="50"  height="46" fill="#2a5516"/>
+  <rect x="905" y="114" width="55"  height="28" fill="#2a5516"/>
+  <rect x="960" y="118" width="40"  height="24" fill="#2a5516"/>
   <!-- grass top highlight -->
-  <rect x="0"   y="78" width="1000" height="3"  fill="#3a7020" opacity="0.5"/>
-  <!-- Tree 1 (left) -->
-  <rect x="52"  y="30" width="24"  height="26" fill="#163a0c"/>
-  <rect x="44"  y="42" width="40"  height="20" fill="#163a0c"/>
-  <rect x="56"  y="18" width="12"  height="16" fill="#163a0c"/>
-  <rect x="61"  y="56" width="10"  height="28" fill="#4a2810"/>
-  <!-- Tree 1 3D side -->
-  <rect x="44"  y="42" width="5"   height="20" fill="#0f2a08"/>
-  <!-- Tree 2 (mid-left) -->
-  <rect x="218" y="24" width="28"  height="28" fill="#1c4a10"/>
-  <rect x="210" y="36" width="44"  height="22" fill="#1c4a10"/>
-  <rect x="222" y="12" width="12"  height="16" fill="#1c4a10"/>
-  <rect x="228" y="58" width="10"  height="24" fill="#4a2810"/>
-  <rect x="210" y="36" width="5"   height="22" fill="#123008"/>
-  <!-- Tree 3 (right) -->
-  <rect x="726" y="28" width="24"  height="26" fill="#163a0c"/>
-  <rect x="718" y="40" width="40"  height="20" fill="#163a0c"/>
-  <rect x="730" y="16" width="12"  height="16" fill="#163a0c"/>
-  <rect x="735" y="58" width="10"  height="28" fill="#4a2810"/>
-  <rect x="718" y="40" width="5"   height="20" fill="#0f2a08"/>
-  <!-- Tree 4 (far right) -->
-  <rect x="870" y="22" width="28"  height="28" fill="#1c4a10"/>
-  <rect x="862" y="34" width="44"  height="22" fill="#1c4a10"/>
-  <rect x="876" y="10" width="12"  height="16" fill="#1c4a10"/>
-  <rect x="882" y="52" width="10"  height="28" fill="#4a2810"/>
-  <rect x="862" y="34" width="5"   height="22" fill="#123008"/>
+  <rect x="0"   y="118" width="1000" height="4"  fill="#3a7020" opacity="0.6"/>
+
+  <!-- BIG TREE 1 (far left) — trunk + foliage layers -->
+  <rect x="48"  y="88"  width="16" height="38" fill="#5c3a10"/><!-- trunk -->
+  <rect x="42"  y="90"  width="4"  height="36" fill="#3a2208"/><!-- trunk shadow -->
+  <rect x="20"  y="54"  width="72" height="42" fill="#1a4a0c"/><!-- foliage bottom -->
+  <rect x="28"  y="34"  width="56" height="32" fill="#1e5610"/><!-- foliage mid -->
+  <rect x="36"  y="14"  width="40" height="28" fill="#246012"/><!-- foliage top -->
+  <rect x="44"  y="2"   width="24" height="18" fill="#1a5010"/><!-- foliage tip -->
+  <!-- leaf highlights -->
+  <rect x="20"  y="54"  width="72" height="5"  fill="#2a6a18" opacity="0.7"/>
+  <rect x="28"  y="34"  width="56" height="5"  fill="#2a6a18" opacity="0.7"/>
+  <rect x="36"  y="14"  width="40" height="5"  fill="#2a6a18" opacity="0.6"/>
+  <!-- tree shadow side -->
+  <rect x="20"  y="54"  width="6"  height="42" fill="#0f2e07"/>
+  <rect x="28"  y="34"  width="6"  height="32" fill="#0f2e07"/>
+
+  <!-- BIG TREE 2 (mid-left) -->
+  <rect x="248" y="86"  width="16" height="36" fill="#5c3a10"/>
+  <rect x="242" y="88"  width="4"  height="34" fill="#3a2208"/>
+  <rect x="218" y="50"  width="76" height="44" fill="#1c5010"/>
+  <rect x="228" y="30"  width="58" height="32" fill="#205812"/>
+  <rect x="238" y="10"  width="40" height="28" fill="#246012"/>
+  <rect x="246" y="0"   width="24" height="16" fill="#1a5010"/>
+  <rect x="218" y="50"  width="76" height="5"  fill="#2e7020" opacity="0.7"/>
+  <rect x="228" y="30"  width="58" height="5"  fill="#2e7020" opacity="0.6"/>
+  <rect x="218" y="50"  width="6"  height="44" fill="#0f2e07"/>
+  <rect x="228" y="30"  width="6"  height="32" fill="#0f2e07"/>
+
+  <!-- BIG TREE 3 (center-right) -->
+  <rect x="618" y="84"  width="16" height="40" fill="#5c3a10"/>
+  <rect x="612" y="86"  width="4"  height="38" fill="#3a2208"/>
+  <rect x="590" y="48"  width="70" height="44" fill="#1a4a0c"/>
+  <rect x="598" y="28"  width="54" height="32" fill="#1e5610"/>
+  <rect x="608" y="8"   width="36" height="28" fill="#246012"/>
+  <rect x="614" y="0"   width="22" height="14" fill="#1a5010"/>
+  <rect x="590" y="48"  width="70" height="5"  fill="#2a6a18" opacity="0.7"/>
+  <rect x="598" y="28"  width="54" height="5"  fill="#2a6a18" opacity="0.6"/>
+  <rect x="590" y="48"  width="6"  height="44" fill="#0f2e07"/>
+  <rect x="598" y="28"  width="6"  height="32" fill="#0f2e07"/>
+
+  <!-- BIG TREE 4 (far right) -->
+  <rect x="862" y="82"  width="16" height="42" fill="#5c3a10"/>
+  <rect x="856" y="84"  width="4"  height="40" fill="#3a2208"/>
+  <rect x="836" y="46"  width="72" height="44" fill="#1c5010"/>
+  <rect x="844" y="26"  width="58" height="32" fill="#205812"/>
+  <rect x="854" y="6"   width="40" height="28" fill="#246012"/>
+  <rect x="862" y="0"   width="22" height="12" fill="#1a5010"/>
+  <rect x="836" y="46"  width="72" height="5"  fill="#2e7020" opacity="0.7"/>
+  <rect x="844" y="26"  width="58" height="5"  fill="#2e7020" opacity="0.6"/>
+  <rect x="836" y="46"  width="6"  height="44" fill="#0f2e07"/>
+  <rect x="844" y="26"  width="6"  height="32" fill="#0f2e07"/>
 </svg>
 
 <!-- ============================================================
-     STEVE & ALEX WALKING ON GROUND
+     STEVE & ALEX — enhanced faces, feet touch ground
      ============================================================ -->
 <div class="ground-chars">
 
-  <!-- STEVE (walks left → right, 3D-ish shading) -->
+  <!-- STEVE -->
   <div class="steve-char">
-    <svg viewBox="0 0 42 78" xmlns="http://www.w3.org/2000/svg"
-         width="42" height="78" style="image-rendering:pixelated;">
+    <svg viewBox="0 0 48 90" xmlns="http://www.w3.org/2000/svg"
+         width="48" height="90" style="image-rendering:pixelated;">
       <g class="char-body-g">
-        <!-- HEAD — front face -->
-        <rect x="9"  y="0"  width="24" height="24" fill="#c68642"/>
-        <!-- HEAD — right side (3D) -->
-        <rect x="33" y="3"  width="6"  height="21" fill="#a06830"/>
-        <!-- HEAD — top (3D) -->
-        <rect x="9"  y="0"  width="24" height="3"  fill="#d4944e"/>
+        <!-- HEAD front -->
+        <rect x="8"  y="0"  width="28" height="28" fill="#c68642"/>
+        <!-- HEAD right side 3D -->
+        <rect x="36" y="2"  width="7"  height="26" fill="#9a6030"/>
+        <!-- HEAD top 3D -->
+        <rect x="8"  y="0"  width="28" height="4"  fill="#d89050"/>
         <!-- Hair -->
-        <rect x="9"  y="0"  width="24" height="7"  fill="#3a1a00"/>
-        <rect x="7"  y="4"  width="3"  height="10" fill="#3a1a00"/>
-        <rect x="33" y="4"  width="3"  height="6"  fill="#2a1200"/>
-        <!-- Eyes -->
-        <rect x="13" y="9"  width="5"  height="5"  fill="#1a0a00"/>
-        <rect x="14" y="10" width="3"  height="3"  fill="#5a8aff"/>
-        <rect x="24" y="9"  width="5"  height="5"  fill="#1a0a00"/>
-        <rect x="25" y="10" width="3"  height="3"  fill="#5a8aff"/>
+        <rect x="8"  y="0"  width="28" height="8"  fill="#2a1000"/>
+        <rect x="5"  y="4"  width="4"  height="12" fill="#2a1000"/>
+        <rect x="36" y="2"  width="4"  height="7"  fill="#1a0800"/>
+        <!-- Eyebrows -->
+        <rect x="13" y="10" width="6"  height="2"  fill="#2a1000"/>
+        <rect x="27" y="10" width="6"  height="2"  fill="#2a1000"/>
+        <!-- Eyes — white + blue iris + black pupil -->
+        <rect x="12" y="12" width="8"  height="7"  fill="#fff"/>
+        <rect x="14" y="13" width="4"  height="5"  fill="#4a7aee"/>
+        <rect x="15" y="14" width="2"  height="3"  fill="#1a2a88"/>
+        <rect x="15" y="15" width="1"  height="1"  fill="#fff"/><!-- shine -->
+        <rect x="26" y="12" width="8"  height="7"  fill="#fff"/>
+        <rect x="28" y="13" width="4"  height="5"  fill="#4a7aee"/>
+        <rect x="29" y="14" width="2"  height="3"  fill="#1a2a88"/>
+        <rect x="29" y="15" width="1"  height="1"  fill="#fff"/>
         <!-- Nose -->
-        <rect x="19" y="13" width="4"  height="3"  fill="#a05c28"/>
-        <!-- Mouth -->
-        <rect x="14" y="18" width="14" height="3"  fill="#7a3a10"/>
-        <rect x="16" y="19" width="10" height="2"  fill="#5a2808"/>
+        <rect x="20" y="16" width="5"  height="4"  fill="#a05c28"/>
+        <rect x="20" y="19" width="2"  height="2"  fill="#7a3a10"/>
+        <rect x="23" y="19" width="2"  height="2"  fill="#7a3a10"/>
+        <!-- Mouth — smile -->
+        <rect x="14" y="22" width="3"  height="3"  fill="#5a2808"/>
+        <rect x="17" y="24" width="12" height="2"  fill="#5a2808"/>
+        <rect x="29" y="22" width="3"  height="3"  fill="#5a2808"/>
+        <rect x="15" y="23" width="16" height="2"  fill="#3a1400"/>
 
-        <!-- BODY — front -->
-        <rect x="9"  y="24" width="24" height="22" fill="#1a3d8a"/>
-        <!-- BODY — right side (3D) -->
-        <rect x="33" y="26" width="6"  height="20" fill="#102870"/>
-        <!-- BODY — top (3D) -->
-        <rect x="9"  y="24" width="24" height="3"  fill="#2a50a8"/>
-        <!-- Shirt detail -->
-        <rect x="13" y="28" width="6"  height="14" fill="#2050aa"/>
-        <rect x="23" y="28" width="6"  height="14" fill="#1840a0"/>
+        <!-- BODY -->
+        <rect x="8"  y="28" width="28" height="26" fill="#1a3d8a"/>
+        <rect x="36" y="30" width="7"  height="24" fill="#102870"/>
+        <rect x="8"  y="28" width="28" height="4"  fill="#2a50a8"/>
+        <rect x="13" y="32" width="8"  height="16" fill="#2050aa"/>
+        <rect x="25" y="32" width="8"  height="16" fill="#1840a0"/>
         <!-- Belt -->
-        <rect x="9"  y="42" width="24" height="4"  fill="#3a2808"/>
-        <rect x="33" y="42" width="6"  height="4"  fill="#2a1a04"/>
+        <rect x="8"  y="50" width="28" height="4"  fill="#3a2808"/>
+        <rect x="36" y="50" width="7"  height="4"  fill="#2a1a04"/>
+        <!-- Belt buckle -->
+        <rect x="19" y="51" width="8"  height="3"  fill="#888820"/>
 
-        <!-- LEFT ARM (swings) -->
-        <g class="arm-l" style="transform-origin:9px 26px; transform:translateX(0) translateY(0)">
-          <rect x="1"  y="24" width="8"  height="20" fill="#c68642"/>
-          <rect x="0"  y="26" width="2"  height="18" fill="#a06830"/>
-          <rect x="1"  y="24" width="8"  height="3"  fill="#d4944e"/>
+        <!-- LEFT ARM -->
+        <g class="arm-l" style="transform-origin:8px 30px;">
+          <rect x="0"  y="28" width="8"  height="24" fill="#c68642"/>
+          <rect x="0"  y="30" width="3"  height="22" fill="#9a6030"/>
+          <rect x="0"  y="28" width="8"  height="4"  fill="#d89050"/>
         </g>
         <!-- RIGHT ARM -->
-        <g class="arm-r" style="transform-origin:33px 26px;">
-          <rect x="33" y="24" width="8"  height="20" fill="#b07438"/>
-          <rect x="39" y="26" width="2"  height="18" fill="#906024"/>
+        <g class="arm-r" style="transform-origin:36px 30px;">
+          <rect x="36" y="28" width="8"  height="24" fill="#b07438"/>
+          <rect x="41" y="30" width="3"  height="22" fill="#8a5820"/>
         </g>
 
-        <!-- PANTS — front -->
-        <rect x="9"  y="46" width="10" height="20" fill="#3a2a6a"/>
-        <rect x="23" y="46" width="10" height="20" fill="#3a2a6a"/>
-        <!-- PANTS — 3D side -->
-        <rect x="33" y="46" width="6"  height="20" fill="#2a1a5a"/>
-        <!-- Gap between legs -->
-        <rect x="19" y="46" width="4"  height="10" fill="#2a1a5a"/>
+        <!-- PANTS -->
+        <rect x="8"  y="54" width="12" height="24" fill="#3a2a6a"/>
+        <rect x="24" y="54" width="12" height="24" fill="#3a2a6a"/>
+        <rect x="36" y="54" width="7"  height="24" fill="#2a1a5a"/>
+        <rect x="20" y="54" width="4"  height="12" fill="#2a1a5a"/>
 
-        <!-- LEFT LEG (swings) -->
-        <g class="leg-l" style="transform-origin:14px 46px;">
-          <rect x="9"  y="46" width="10" height="22" fill="#3a2a6a"/>
-          <rect x="7"  y="48" width="3"  height="20" fill="#2a1a5a"/>
-          <!-- Shoe -->
-          <rect x="7"  y="66" width="13" height="6"  fill="#1a0e00"/>
-          <rect x="7"  y="70" width="13" height="2"  fill="#2a1a00"/>
+        <!-- LEFT LEG -->
+        <g class="leg-l" style="transform-origin:14px 54px;">
+          <rect x="8"  y="54" width="12" height="26" fill="#3a2a6a"/>
+          <rect x="6"  y="56" width="4"  height="24" fill="#2a1a5a"/>
+          <!-- Shoe — flat on ground -->
+          <rect x="5"  y="78" width="16" height="7"  fill="#1a0e00"/>
+          <rect x="4"  y="83" width="18" height="3"  fill="#2a1800"/>
         </g>
-        <!-- RIGHT LEG (swings) -->
-        <g class="leg-r" style="transform-origin:28px 46px;">
-          <rect x="23" y="46" width="10" height="22" fill="#2e2260"/>
-          <rect x="33" y="48" width="3"  height="20" fill="#1e1450"/>
+        <!-- RIGHT LEG -->
+        <g class="leg-r" style="transform-origin:30px 54px;">
+          <rect x="24" y="54" width="12" height="26" fill="#2e2260"/>
+          <rect x="36" y="56" width="4"  height="24" fill="#1e1450"/>
           <!-- Shoe -->
-          <rect x="22" y="66" width="13" height="6"  fill="#150b00"/>
-          <rect x="22" y="70" width="13" height="2"  fill="#261800"/>
+          <rect x="23" y="78" width="16" height="7"  fill="#150b00"/>
+          <rect x="22" y="83" width="18" height="3"  fill="#201500"/>
         </g>
       </g>
     </svg>
   </div>
 
-  <!-- ALEX (walks right → left, 3D-ish, teal outfit) -->
+  <!-- ALEX -->
   <div class="alex-char">
-    <svg viewBox="0 0 38 78" xmlns="http://www.w3.org/2000/svg"
-         width="38" height="78" style="image-rendering:pixelated;">
+    <svg viewBox="0 0 44 90" xmlns="http://www.w3.org/2000/svg"
+         width="44" height="90" style="image-rendering:pixelated;">
       <g class="char-body-g">
         <!-- HEAD -->
-        <rect x="7"  y="0"  width="22" height="22" fill="#daa060"/>
-        <!-- 3D side -->
-        <rect x="29" y="2"  width="5"  height="20" fill="#b07840"/>
-        <!-- 3D top -->
-        <rect x="7"  y="0"  width="22" height="3"  fill="#e8b070"/>
-        <!-- Hair (long orange) -->
-        <rect x="5"  y="0"  width="24" height="6"  fill="#c05000"/>
-        <rect x="3"  y="4"  width="4"  height="24" fill="#c05000"/>
-        <rect x="29" y="2"  width="3"  height="5"  fill="#a03a00"/>
-        <rect x="5"  y="18" width="4"  height="10" fill="#c05000"/>
-        <!-- Eyes (green) -->
-        <rect x="11" y="8"  width="4"  height="4"  fill="#1a0a00"/>
-        <rect x="12" y="9"  width="2"  height="2"  fill="#40b060"/>
-        <rect x="21" y="8"  width="4"  height="4"  fill="#1a0a00"/>
-        <rect x="22" y="9"  width="2"  height="2"  fill="#40b060"/>
+        <rect x="7"  y="0"  width="26" height="26" fill="#daa060"/>
+        <rect x="33" y="2"  width="6"  height="24" fill="#b07840"/>
+        <rect x="7"  y="0"  width="26" height="4"  fill="#e8b070"/>
+        <!-- Hair -->
+        <rect x="5"  y="0"  width="28" height="7"  fill="#b84000"/>
+        <rect x="3"  y="4"  width="4"  height="28" fill="#b84000"/>
+        <rect x="33" y="2"  width="3"  height="6"  fill="#902e00"/>
+        <rect x="5"  y="20" width="4"  height="12" fill="#b84000"/>
+        <!-- Eyebrows -->
+        <rect x="11" y="9"  width="5"  height="2"  fill="#7a2800"/>
+        <rect x="24" y="9"  width="5"  height="2"  fill="#7a2800"/>
+        <!-- Eyes — white + green iris + pupil -->
+        <rect x="10" y="11" width="7"  height="6"  fill="#fff"/>
+        <rect x="11" y="12" width="4"  height="4"  fill="#38a050"/>
+        <rect x="12" y="13" width="2"  height="2"  fill="#186030"/>
+        <rect x="12" y="13" width="1"  height="1"  fill="#fff"/>
+        <rect x="23" y="11" width="7"  height="6"  fill="#fff"/>
+        <rect x="24" y="12" width="4"  height="4"  fill="#38a050"/>
+        <rect x="25" y="13" width="2"  height="2"  fill="#186030"/>
+        <rect x="25" y="13" width="1"  height="1"  fill="#fff"/>
         <!-- Nose -->
-        <rect x="17" y="12" width="3"  height="2"  fill="#b07838"/>
-        <!-- Mouth -->
-        <rect x="12" y="16" width="12" height="3"  fill="#904828"/>
-        <rect x="14" y="17" width="8"  height="2"  fill="#703018"/>
+        <rect x="18" y="15" width="4"  height="3"  fill="#b07838"/>
+        <rect x="18" y="17" width="2"  height="2"  fill="#804820"/>
+        <!-- Mouth — small smile -->
+        <rect x="13" y="20" width="3"  height="3"  fill="#904828"/>
+        <rect x="16" y="22" width="8"  height="2"  fill="#904828"/>
+        <rect x="24" y="20" width="3"  height="3"  fill="#904828"/>
+        <rect x="14" y="21" width="12" height="2"  fill="#5a2010"/>
 
-        <!-- BODY (teal top) -->
-        <rect x="8"  y="22" width="20" height="22" fill="#1a7a60"/>
-        <rect x="28" y="24" width="5"  height="20" fill="#106050"/>
-        <rect x="8"  y="22" width="20" height="3"  fill="#2a9a78"/>
-        <!-- Top detail -->
-        <rect x="11" y="26" width="5"  height="12" fill="#22906e"/>
-        <rect x="20" y="26" width="5"  height="12" fill="#168060"/>
+        <!-- BODY teal -->
+        <rect x="8"  y="26" width="22" height="24" fill="#1a7a60"/>
+        <rect x="30" y="28" width="6"  height="22" fill="#106050"/>
+        <rect x="8"  y="26" width="22" height="4"  fill="#2a9a78"/>
+        <rect x="11" y="30" width="6"  height="14" fill="#22906e"/>
+        <rect x="20" y="30" width="6"  height="14" fill="#168060"/>
 
-        <!-- ARMS (slimmer for Alex) -->
-        <g class="arm-l" style="transform-origin:8px 24px;">
-          <rect x="2"  y="22" width="6"  height="18" fill="#daa060"/>
-          <rect x="1"  y="24" width="2"  height="16" fill="#b07840"/>
-          <rect x="2"  y="22" width="6"  height="3"  fill="#e8b070"/>
+        <!-- ARMS slim -->
+        <g class="arm-l" style="transform-origin:8px 28px;">
+          <rect x="2"  y="26" width="6"  height="22" fill="#daa060"/>
+          <rect x="1"  y="28" width="3"  height="20" fill="#b07840"/>
+          <rect x="2"  y="26" width="6"  height="4"  fill="#e8b070"/>
         </g>
-        <g class="arm-r" style="transform-origin:28px 24px;">
-          <rect x="28" y="22" width="6"  height="18" fill="#c09050"/>
-          <rect x="32" y="24" width="2"  height="16" fill="#a07030"/>
+        <g class="arm-r" style="transform-origin:30px 28px;">
+          <rect x="30" y="26" width="6"  height="22" fill="#c09050"/>
+          <rect x="34" y="28" width="3"  height="20" fill="#a07030"/>
         </g>
 
-        <!-- PANTS (dark teal) -->
-        <rect x="8"  y="44" width="8"  height="22" fill="#1a5040"/>
-        <rect x="20" y="44" width="8"  height="22" fill="#1a5040"/>
-        <rect x="28" y="44" width="5"  height="22" fill="#104030"/>
-        <rect x="16" y="44" width="4"  height="10" fill="#104030"/>
+        <!-- PANTS dark teal -->
+        <rect x="8"  y="50" width="10" height="26" fill="#1a5040"/>
+        <rect x="22" y="50" width="10" height="26" fill="#1a5040"/>
+        <rect x="30" y="50" width="6"  height="26" fill="#104030"/>
+        <rect x="18" y="50" width="4"  height="12" fill="#104030"/>
 
         <!-- LEFT LEG -->
-        <g class="leg-l" style="transform-origin:12px 44px;">
-          <rect x="8"  y="44" width="8"  height="22" fill="#1a5040"/>
-          <rect x="6"  y="46" width="3"  height="20" fill="#104030"/>
-          <rect x="6"  y="64" width="11" height="6"  fill="#1a0e00"/>
-          <rect x="6"  y="68" width="11" height="2"  fill="#2a1800"/>
+        <g class="leg-l" style="transform-origin:13px 50px;">
+          <rect x="8"  y="50" width="10" height="26" fill="#1a5040"/>
+          <rect x="6"  y="52" width="4"  height="24" fill="#104030"/>
+          <rect x="5"  y="74" width="14" height="7"  fill="#1a0e00"/>
+          <rect x="4"  y="79" width="16" height="3"  fill="#2a1800"/>
         </g>
         <!-- RIGHT LEG -->
-        <g class="leg-r" style="transform-origin:24px 44px;">
-          <rect x="20" y="44" width="8"  height="22" fill="#154038"/>
-          <rect x="28" y="46" width="3"  height="20" fill="#0e3028"/>
-          <rect x="19" y="64" width="11" height="6"  fill="#150b00"/>
-          <rect x="19" y="68" width="11" height="2"  fill="#201500"/>
+        <g class="leg-r" style="transform-origin:27px 50px;">
+          <rect x="22" y="50" width="10" height="26" fill="#154038"/>
+          <rect x="30" y="52" width="4"  height="24" fill="#0e3028"/>
+          <rect x="21" y="74" width="14" height="7"  fill="#150b00"/>
+          <rect x="20" y="79" width="16" height="3"  fill="#201500"/>
         </g>
       </g>
     </svg>
   </div>
 
 </div><!-- end ground-chars -->
-
-<!-- ============================================================
-     TIME BADGE + MUSIC PLAYER (stacked top-right)
-     ============================================================ -->
-<div class="top-right-stack">
-  <div class="time-badge">
-    <div id="timeBadgeTime">--:--:--</div>
-    <div class="time-period" id="timeBadgePeriod">⛅ LOADING...</div>
-  </div>
-  <div class="music-player">
-    <div id="musicNote" class="music-note">♪</div>
-    <div class="music-info">
-      <div class="music-title" id="musicTitle">Pigstep — Lena Raine</div>
-      <div class="music-status" id="musicStatus">⏸ PAUSED</div>
-      <div class="music-vol">
-        VOL:
-        <input type="range" class="vol-bar" id="volSlider"
-               min="0" max="100" value="35" step="1"
-               oninput="setVolume(this.value)"
-               style="width:60px;cursor:pointer;"/>
-        <span id="volDisplay">35%</span>
-      </div>
-    </div>
-    <div>
-      <button class="music-btn" id="musicToggle" onclick="toggleMusic()">[ ▶ PLAY ]</button>
-    </div>
-  </div>
-</div>
-
 
 
 <!-- ============================================================
@@ -489,17 +500,42 @@
   </div>
 
 
-  <!-- LIVE STATUS BAR -->
-  <div class="live-status-bar">
-    <div class="live-badge" id="liveBadge">
-      <span class="live-dot" id="liveDot">●</span>
-      <span id="liveStatus">CONNECTING...</span>
+  <!-- 4 INFO BOXES: Total Readings | Current Readings | Time | Music -->
+  <div class="info-boxes-row">
+    <!-- Box 1: Total Readings -->
+    <div class="info-box">
+      <div class="info-box-label">⛏ TOTAL READINGS</div>
+      <div class="info-box-value" id="totalReadings">--</div>
+      <div class="info-box-sub">ALL TIME</div>
     </div>
-    <div class="total-readings-badge">
-      ⛏ TOTAL READINGS: <span id="totalReadings">--</span>
+    <!-- Box 2: Last Update time (always shown, updates whether online or offline) -->
+    <div class="info-box" id="currentReadingsBox">
+      <div class="info-box-label">📡 LAST UPDATE</div>
+      <div class="info-box-value info-box-clock" id="lastUpdate" style="font-size:clamp(8px,1.3vw,13px);">--:--:--</div>
+      <div class="info-box-sub" id="lastUpdateSub">WAITING FOR ESP32</div>
     </div>
-    <div class="last-update-badge">
-      LAST UPDATE: <span id="lastUpdate">--</span>
+    <!-- Box 3: Time -->
+    <div class="info-box">
+      <div class="info-box-label" id="timeBadgePeriod2">⛅ LOADING...</div>
+      <div class="info-box-value info-box-clock" id="timeBadgeTime2">--:--:--</div>
+      <div class="info-box-sub">PHILIPPINE TIME</div>
+    </div>
+    <!-- Box 4: Music -->
+    <div class="info-box info-box-music">
+      <div class="info-box-label"><span id="musicNote" class="music-note">♪</span> NOW PLAYING</div>
+      <div class="info-box-value info-box-track">
+        <span id="musicTitle" style="display:inline-block; animation:scrollText 10s linear infinite; white-space:nowrap;">Pigstep — Lena Raine</span>
+      </div>
+      <div class="info-box-music-controls">
+        <span id="musicStatus" style="font-size:clamp(4px,0.7vw,5px); color:#666;">⏸ PAUSED</span>
+        <button class="music-btn" id="musicToggle" onclick="toggleMusic()">[ ▶ PLAY ]</button>
+      </div>
+      <div class="music-vol">
+        VOL:
+        <input type="range" class="vol-bar" id="volSlider" min="0" max="100" value="35" step="1"
+               oninput="setVolume(this.value)" style="width:50px;cursor:pointer;"/>
+        <span id="volDisplay">35%</span>
+      </div>
     </div>
   </div>
 
@@ -513,16 +549,34 @@
     <div class="alert-dismiss" onclick="dismissAlert()">[ X ]</div>
   </div>
 
+  <!-- LIVE STATUS BADGE (below humidity warning) -->
+  <div class="live-status-bar">
+    <div class="live-badge" id="liveBadge">
+      <span class="live-dot" id="liveDot">●</span>
+      <span id="liveStatus">CONNECTING...</span>
+    </div>
+  </div>
+
   <!-- STAT CARDS -->
   <div class="cards-row">
     <div class="mc-card temp-card">
-      <span class="card-icon">🌡️</span>
+      <span class="card-icon temp-icon-wrap">
+        🌡️
+        <span class="heat-wave heat-wave-1"></span>
+        <span class="heat-wave heat-wave-2"></span>
+        <span class="heat-wave heat-wave-3"></span>
+      </span>
       <div class="card-label">:: TEMPERATURE</div>
       <div class="card-value">28.4°C</div>
       <div class="card-status">● LIVE · ESP32 SENSOR</div>
     </div>
     <div class="mc-card hum-card">
-      <span class="card-icon">💧</span>
+      <span class="card-icon hum-icon-wrap">
+        💧
+        <span class="water-drop drop-1"></span>
+        <span class="water-drop drop-2"></span>
+        <span class="water-drop drop-3"></span>
+      </span>
       <div class="card-label">:: HUMIDITY</div>
       <div class="card-value">78%</div>
       <div class="card-status">● LIVE · DHT11 SENSOR</div>
@@ -547,6 +601,19 @@
       <div class="ms-label">HUM MIN</div>
       <div class="ms-value">70%</div>
     </div>
+  </div>
+
+  <!-- CHARTS -->
+  <div class="section-head">HISTORICAL DATA</div>
+  <div class="chart-container">
+    <div class="chart-title">▸ TEMPERATURE (°C)</div>
+    <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
+    <button class="export-btn" onclick="downloadCSV('temperature')">⬇ EXPORT TEMP CSV</button>
+  </div>
+  <div class="chart-container">
+    <div class="chart-title">▸ HUMIDITY (%)</div>
+    <div class="chart-wrap"><canvas id="humChart"></canvas></div>
+    <button class="export-btn" onclick="downloadCSV('humidity')">⬇ EXPORT HUM CSV</button>
   </div>
 
   <!-- VILLAGER SUGGESTIONS -->
@@ -590,19 +657,6 @@
       </div>
     </div>
     <div class="suggest-grid" id="suggestGrid"></div>
-  </div>
-
-  <!-- CHARTS -->
-  <div class="section-head">HISTORICAL DATA</div>
-  <div class="chart-container">
-    <div class="chart-title">▸ TEMPERATURE (°C)</div>
-    <div class="chart-wrap"><canvas id="tempChart"></canvas></div>
-    <button class="export-btn" onclick="downloadCSV('temperature')">⬇ EXPORT TEMP CSV</button>
-  </div>
-  <div class="chart-container">
-    <div class="chart-title">▸ HUMIDITY (%)</div>
-    <div class="chart-wrap"><canvas id="humChart"></canvas></div>
-    <button class="export-btn" onclick="downloadCSV('humidity')">⬇ EXPORT HUM CSV</button>
   </div>
 
   <!-- RECENT READINGS -->

@@ -164,26 +164,18 @@ body { font-family: 'Press Start 2P', monospace; background: #000; min-height: 1
 /* Celestial bodies */
 .celestial {
   position: fixed; z-index: 2; image-rendering: pixelated;
-  transition: left 5s ease, bottom 5s ease, opacity 5s ease;
+  transition: left 60s linear, bottom 60s linear, opacity 5s ease;
 }
 .sun-el {
-  width: 68px; height: 68px; background: #ffed44;
-  animation: sunPulse 3.5s ease-in-out infinite;
-}
-@keyframes sunPulse {
-  0%,100% { box-shadow: 0 0 0 10px rgba(255,220,0,0.45), 0 0 0 26px rgba(255,150,0,0.25), 0 0 0 52px rgba(255,100,0,0.1); }
-  50%      { box-shadow: 0 0 0 16px rgba(255,220,0,0.55), 0 0 0 36px rgba(255,150,0,0.3),  0 0 0 68px rgba(255,100,0,0.15); }
+  width: 64px; height: 64px; background: #ffed44;
+  box-shadow: inset -6px -6px 0 #e8c800, inset 6px 6px 0 #fff8a0;
 }
 .moon-el {
-  width: 58px; height: 58px; background: #e8e8c0;
-  animation: moonPulse 4s ease-in-out infinite;
+  width: 56px; height: 56px; background: #e8e8c0;
+  box-shadow: inset -5px -5px 0 #c8c890, inset 4px 4px 0 #ffffff;
 }
-@keyframes moonPulse {
-  0%,100% { box-shadow: 0 0 0 8px rgba(220,220,160,0.28), 0 0 0 20px rgba(180,180,120,0.12); }
-  50%      { box-shadow: 0 0 0 14px rgba(220,220,160,0.38), 0 0 0 30px rgba(180,180,120,0.18); }
-}
-.moon-el::before { content:''; position:absolute; top:13px; left:15px; width:11px; height:11px; background:rgba(0,0,0,0.13); border-radius:50%; }
-.moon-el::after  { content:''; position:absolute; top:30px; left:30px; width:8px;  height:8px;  background:rgba(0,0,0,0.09); border-radius:50%; }
+.moon-el::before { content:''; position:absolute; top:10px; left:12px; width:10px; height:10px; background:rgba(0,0,0,0.18); }
+.moon-el::after  { content:''; position:absolute; top:28px; left:28px; width:8px;  height:8px;  background:rgba(0,0,0,0.12); }
 
 .horizon-glow {
   position: fixed; bottom: 18%; left: 0; right: 0; height: 150px;
@@ -201,7 +193,7 @@ body { font-family: 'Press Start 2P', monospace; background: #000; min-height: 1
 /* ============================================================
    TERRAIN — 3D LAYERED
    ============================================================ */
-.terrain { position: fixed; bottom: 0; left: 0; right: 0; z-index: 4; }
+.terrain { position: fixed; bottom: 0; left: 0; right: 0; z-index: 4; height: 200px; }
 
 /* ============================================================
    GHAST (floating in sky)
@@ -224,73 +216,66 @@ body { font-family: 'Press Start 2P', monospace; background: #000; min-height: 1
   99%  { transform: translate(-15px,  5px)   scaleX(-1); }
   100% { transform: translate(0px,    0px)   scaleX(1);  }
 }
-/* Ghast body bobbing */
 .ghast-body-g { animation: ghastBob 2.2s ease-in-out infinite; }
 @keyframes ghastBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
-/* Ghast tentacles wave */
 .tentacle { animation: tentacleWave 1.2s ease-in-out infinite alternate; transform-origin: top center; }
 .t1{animation-delay:0s}   .t2{animation-delay:0.1s} .t3{animation-delay:0.2s}
 .t4{animation-delay:0.3s} .t5{animation-delay:0.4s} .t6{animation-delay:0.5s}
 .t7{animation-delay:0.6s} .t8{animation-delay:0.7s} .t9{animation-delay:0.35s}
 @keyframes tentacleWave { from{transform:scaleY(1) skewX(0deg)} to{transform:scaleY(0.8) skewX(6deg)} }
-/* Ghast eye glow */
 .ghast-eye { animation: eyeGlow 2s ease-in-out infinite alternate; }
 @keyframes eyeGlow { from{opacity:0.7} to{opacity:1; filter:drop-shadow(0 0 4px rgba(255,50,50,1))} }
 
 /* ============================================================
-   STEVE & ALEX — 3D STYLE WALKING ON GROUND
+   STEVE & ALEX — enhanced, feet touch ground
    ============================================================ */
 .ground-chars {
   position: fixed;
-  bottom: 90px; /* sit on terrain */
+  bottom: 68px; /* grass surface = terrain 200px - ~132px grass top */
   left: 0; right: 0;
   z-index: 6; pointer-events: none;
   height: 120px;
 }
 
-/* Steve walks left-to-right */
 .steve-char {
   position: absolute;
   bottom: 0;
   animation: steveWalk 14s linear infinite;
-  filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.7));
+  filter: drop-shadow(3px 5px 2px rgba(0,0,0,0.8));
 }
 @keyframes steveWalk {
-  0%   { left: -80px;           transform: scaleX(1); }
+  0%   { left: -80px;             transform: scaleX(1); }
   49%  { left: calc(100% + 10px); transform: scaleX(1); }
   50%  { left: calc(100% + 10px); transform: scaleX(-1); }
-  99%  { left: -80px;           transform: scaleX(-1); }
-  100% { left: -80px;           transform: scaleX(1); }
+  99%  { left: -80px;             transform: scaleX(-1); }
+  100% { left: -80px;             transform: scaleX(1); }
 }
-/* Alex walks right-to-left, offset */
 .alex-char {
   position: absolute;
   bottom: 0;
   animation: alexWalk 16s linear infinite;
   animation-delay: -6s;
-  filter: drop-shadow(4px 6px 3px rgba(0,0,0,0.7));
+  filter: drop-shadow(3px 5px 2px rgba(0,0,0,0.8));
 }
 @keyframes alexWalk {
-  0%   { right: -80px;           transform: scaleX(-1); }
+  0%   { right: -80px;            transform: scaleX(-1); }
   49%  { right: calc(100% + 10px); transform: scaleX(-1); }
   50%  { right: calc(100% + 10px); transform: scaleX(1); }
-  99%  { right: -80px;           transform: scaleX(1); }
-  100% { right: -80px;           transform: scaleX(-1); }
+  99%  { right: -80px;            transform: scaleX(1); }
+  100% { right: -80px;            transform: scaleX(-1); }
 }
 
-/* Leg swing for walking */
-.leg-l { animation: legSwingL 0.4s ease-in-out infinite alternate; transform-origin: top center; }
-.leg-r { animation: legSwingR 0.4s ease-in-out infinite alternate; transform-origin: top center; }
-@keyframes legSwingL { from{transform:rotate(-22deg)} to{transform:rotate(22deg)} }
-@keyframes legSwingR { from{transform:rotate(22deg)}  to{transform:rotate(-22deg)} }
-/* Arm swing */
-.arm-l { animation: armSwingL 0.4s ease-in-out infinite alternate; transform-origin: top center; }
-.arm-r { animation: armSwingR 0.4s ease-in-out infinite alternate; transform-origin: top center; }
-@keyframes armSwingL { from{transform:rotate(18deg)}  to{transform:rotate(-18deg)} }
-@keyframes armSwingR { from{transform:rotate(-18deg)} to{transform:rotate(18deg)} }
-/* Body bob while walking */
-.char-body-g { animation: walkBob 0.4s ease-in-out infinite alternate; }
-@keyframes walkBob { from{transform:translateY(0)} to{transform:translateY(2px)} }
+/* Walking animations — legs step with translateY so feet stay planted */
+.leg-l { animation: legSwingL 0.42s ease-in-out infinite alternate; transform-origin: top center; }
+.leg-r { animation: legSwingR 0.42s ease-in-out infinite alternate; transform-origin: top center; }
+@keyframes legSwingL { from{transform:rotate(-24deg) translateY(0)} to{transform:rotate(24deg) translateY(0)} }
+@keyframes legSwingR { from{transform:rotate(24deg)  translateY(0)} to{transform:rotate(-24deg) translateY(0)} }
+.arm-l { animation: armSwingL 0.42s ease-in-out infinite alternate; transform-origin: top center; }
+.arm-r { animation: armSwingR 0.42s ease-in-out infinite alternate; transform-origin: top center; }
+@keyframes armSwingL { from{transform:rotate(20deg)}  to{transform:rotate(-20deg)} }
+@keyframes armSwingR { from{transform:rotate(-20deg)} to{transform:rotate(20deg)} }
+.char-body-g { animation: walkBob 0.42s ease-in-out infinite alternate; }
+@keyframes walkBob { from{transform:translateY(0)} to{transform:translateY(3px)} }
 
 /* ============================================================
    MUSIC PLAYER (inside top-right stack, below time badge)
@@ -540,7 +525,7 @@ body { font-family: 'Press Start 2P', monospace; background: #000; min-height: 1
   border-top-color: #888; border-left-color: #888;
   border-bottom-color: #111; border-right-color: #111;
   box-shadow: 5px 5px 0 #000, 10px 10px 0 rgba(0,0,0,0.35);
-  padding: 20px; margin-bottom: 20px;
+  padding: 20px 20px 20px 10px; margin-bottom: 20px;
   transition: transform 0.15s, box-shadow 0.15s;
 }
 .chart-container:hover {
@@ -680,9 +665,118 @@ body { font-family: 'Press Start 2P', monospace; background: #000; min-height: 1
 }
 
 /* ============================================================
+   TEMP CARD — vivid heat shimmer animation
+   ============================================================ */
+.temp-icon-wrap {
+  position: relative;
+  display: inline-block;
+}
+.heat-wave {
+  position: absolute;
+  bottom: 100%;
+  border-radius: 50% 50% 0 0;
+  animation: heatRise 1.1s ease-out infinite;
+  pointer-events: none;
+}
+.heat-wave-1 {
+  left: 18%; width: 6px; height: 20px;
+  background: linear-gradient(180deg, rgba(255,60,0,0) 0%, rgba(255,100,0,0.85) 50%, rgba(255,200,0,0.5) 100%);
+  animation-delay: 0s; animation-duration: 1.0s;
+}
+.heat-wave-2 {
+  left: 44%; width: 8px; height: 28px;
+  background: linear-gradient(180deg, rgba(255,60,0,0) 0%, rgba(255,80,0,0.9) 50%, rgba(255,220,0,0.6) 100%);
+  animation-delay: 0.35s; animation-duration: 1.2s;
+}
+.heat-wave-3 {
+  left: 70%; width: 6px; height: 22px;
+  background: linear-gradient(180deg, rgba(255,60,0,0) 0%, rgba(255,120,0,0.8) 50%, rgba(255,180,0,0.45) 100%);
+  animation-delay: 0.7s; animation-duration: 1.0s;
+}
+@keyframes heatRise {
+  0%   { transform: translateY(0)     scaleX(1)   skewX(0deg);  opacity: 0; }
+  15%  { opacity: 1; }
+  50%  { transform: translateY(-16px) scaleX(1.5) skewX(-6deg); opacity: 0.85; }
+  85%  { transform: translateY(-30px) scaleX(0.7) skewX(8deg);  opacity: 0.4; }
+  100% { transform: translateY(-42px) scaleX(0.3) skewX(0deg);  opacity: 0; }
+}
+
+/* ============================================================
+   HUM CARD — vivid water drop wobble animation on the emoji itself
+   ============================================================ */
+.hum-icon-wrap {
+  position: relative;
+  display: inline-block;
+  animation: dropWobble 1.4s ease-in-out infinite;
+}
+.water-drop { display: none; }
+@keyframes dropWobble {
+  0%   { transform: rotate(0deg)   scaleY(1)    translateY(0); }
+  15%  { transform: rotate(-8deg)  scaleY(1.12) translateY(-3px); }
+  30%  { transform: rotate(6deg)   scaleY(0.92) translateY(2px); }
+  45%  { transform: rotate(-4deg)  scaleY(1.08) translateY(-2px); }
+  60%  { transform: rotate(3deg)   scaleY(0.96) translateY(1px); }
+  75%  { transform: rotate(-2deg)  scaleY(1.04) translateY(-1px); }
+  90%  { transform: rotate(1deg)   scaleY(1)    translateY(0); }
+  100% { transform: rotate(0deg)   scaleY(1)    translateY(0); }
+}
+
+/* ============================================================
+   4 INFO BOXES ROW (Total Readings | Last Update | Time | Music)
+   ============================================================ */
+.info-boxes-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.info-box {
+  background: rgba(4,2,14,0.92);
+  border: 3px solid #444;
+  border-top-color: #777; border-left-color: #777;
+  border-bottom-color: #111; border-right-color: #111;
+  box-shadow: 4px 4px 0 #000, 7px 7px 0 rgba(0,0,0,0.35);
+  padding: 14px 14px 12px;
+  transition: transform 0.12s, box-shadow 0.12s;
+  overflow: hidden;
+}
+.info-box:hover {
+  transform: translateY(-3px) translateX(-2px);
+  box-shadow: 6px 8px 0 #000, 10px 12px 0 rgba(0,0,0,0.3);
+  border-top-color: var(--gold); border-left-color: var(--gold);
+}
+.info-box-label {
+  font-size: clamp(4px, 0.75vw, 6px);
+  color: #888; letter-spacing: 1px;
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 5px;
+}
+.info-box-value {
+  font-size: clamp(14px, 2.4vw, 22px);
+  color: var(--gold); text-shadow: 2px 2px 0 var(--gold-dark);
+  line-height: 1.1; margin-bottom: 5px;
+}
+.info-box-small  { font-size: clamp(5px, 1vw, 8px) !important; }
+.info-box-clock  { font-size: clamp(10px, 1.6vw, 16px) !important; }
+.info-box-track  { font-size: clamp(4px, 0.75vw, 6px) !important; color: #ffee58 !important; overflow:hidden; }
+.info-box-sub {
+  font-size: clamp(4px, 0.65vw, 5px);
+  color: #555; letter-spacing: 1px; margin-top: 3px;
+}
+.info-box-music-controls {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 6px; flex-wrap: wrap;
+}
+
+/* ============================================================
    RESPONSIVE — MOBILE FIXES
    ============================================================ */
 @media (max-width: 768px) {
+  .info-boxes-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .info-box { padding: 10px 10px 8px; }
+  .info-box-value { font-size: clamp(12px, 4vw, 18px); }
+  .info-box-small { font-size: clamp(5px, 2vw, 8px) !important; }
+  .info-box-clock { font-size: clamp(9px, 3vw, 14px) !important; }
   .wrapper        { padding: 10px 8px 140px; }
   .cards-row      { grid-template-columns: 1fr; gap: 10px; }
   .mini-stats     { grid-template-columns: repeat(2,1fr); gap: 8px; }
