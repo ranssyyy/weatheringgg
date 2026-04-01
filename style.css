@@ -643,30 +643,81 @@ body { font-family: 'Press Start 2P', monospace; background: #000; min-height: 1
 /* ============================================================
    RESPONSIVE
    ============================================================ */
-@media (max-width: 650px) {
-  .cards-row    { grid-template-columns: 1fr; }
-  .mini-stats   { grid-template-columns: repeat(2,1fr); }
-  .suggest-grid { grid-template-columns: 1fr; }
-  .suggest-card { border-right:none !important; border-bottom:2px solid #1a1a1a !important; }
-  .music-player { min-width: unset; width: calc(100vw - 32px); left: 16px; right: 16px; bottom: 12px; flex-direction: column; gap: 8px; padding: 10px 12px; }
-  .music-info   { flex: 1; min-width: 0; }
-  .music-title  { font-size: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .music-vol    { font-size: 6px; }
-  .music-btn    { font-size: 6px; padding: 7px 10px; }
-  .wrapper      { padding: 12px 10px 120px; }
-  .header h1    { font-size: clamp(11px, 3.5vw, 18px); }
-  .card-value   { font-size: clamp(22px, 7vw, 36px); }
-  .ms-value     { font-size: clamp(10px, 3vw, 16px); }
-  .chart-wrap   { height: 180px; }
+/* ============================================================
+   LIVE STATUS BAR
+   ============================================================ */
+.live-status-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+  padding: 10px 16px; margin-bottom: 16px;
+  background: rgba(0,0,0,0.88);
+  border: 3px solid #333;
+  border-top-color: #66bb6a; border-bottom-color: #66bb6a;
+  box-shadow: 0 4px 0 #000;
+}
+.live-badge {
+  display: flex; align-items: center; gap: 8px;
+  font-size: clamp(6px,1.2vw,9px); color: #66bb6a; letter-spacing: 2px;
+}
+.live-dot {
+  animation: livePulse 1s steps(2) infinite;
+  color: #66bb6a;
+}
+.live-dot.offline { color: #ff7043; animation: none; }
+@keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:0.1} }
+.total-readings-badge {
+  font-size: clamp(5px,1vw,8px); color: var(--gold); letter-spacing: 1px;
+}
+.last-update-badge {
+  font-size: clamp(5px,1vw,7px); color: #666; letter-spacing: 1px;
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE FIXES
+   ============================================================ */
+@media (max-width: 768px) {
+  .wrapper        { padding: 10px 8px 140px; }
+  .cards-row      { grid-template-columns: 1fr; gap: 10px; }
+  .mini-stats     { grid-template-columns: repeat(2,1fr); gap: 8px; }
+  .suggest-grid   { grid-template-columns: 1fr; }
+  .suggest-card   { border-right:none !important; border-bottom:2px solid #1a1a1a !important; }
   .suggest-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-  .suggest-refresh { align-self: flex-end; }
-  .ticker       { font-size: 7px; }
-  .time-badge   { font-size: 7px; top: 8px; right: 8px; padding: 6px 10px; }
+  .suggest-refresh{ align-self: flex-end; }
+  .header h1      { font-size: clamp(11px, 4vw, 18px); }
+  .header .subtitle { font-size: clamp(4px, 1.8vw, 7px); }
+  .card-value     { font-size: clamp(22px, 7vw, 36px); }
+  .ms-value       { font-size: clamp(9px, 3vw, 14px); }
+  .chart-wrap     { height: 170px; }
+  .readings-table table { font-size: clamp(4px,2.2vw,7px); }
+  .readings-table th, .readings-table td { padding: 7px 8px; }
+  .live-status-bar { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .ticker-item    { font-size: clamp(5px, 2vw, 8px); }
+  .time-badge     { font-size: clamp(5px, 2vw, 8px); top: 8px; right: 8px; padding: 6px 10px; }
+  .music-player {
+    left: 8px; right: 8px; bottom: 8px;
+    min-width: unset; flex-wrap: wrap; gap: 6px; padding: 8px 10px;
+  }
+  .music-title  { font-size: 5px; }
+  .music-btn    { font-size: 6px; padding: 6px 8px; }
+  .music-vol    { font-size: 5px; }
+  .section-head { font-size: clamp(6px, 2.5vw, 10px); }
+  .chart-title  { font-size: clamp(5px, 1.8vw, 8px); }
+  .export-btn   { font-size: clamp(4px, 1.5vw, 6px); padding: 7px 10px; }
+  .alert-title  { font-size: clamp(6px, 2vw, 9px); }
+  .alert-msg    { font-size: clamp(4px, 1.5vw, 6px); }
+  .comfort-label { font-size: clamp(5px,2vw,8px); }
+  .comfort-score { font-size: clamp(9px,3vw,14px); }
+  .suggest-title { font-size: clamp(5px,2vw,8px); }
+  .suggest-desc, .suggest-tip { font-size: clamp(4px,1.5vw,6px); }
+  .ghast-wrap   { display: none; }
+  .ground-chars { display: none; }
 }
 
 @media (max-width: 400px) {
-  .header h1  { font-size: 10px; }
-  .card-value { font-size: 20px; }
-  .mini-stats { grid-template-columns: repeat(2,1fr); gap: 8px; }
-  .ms-value   { font-size: 10px; }
+  .header h1    { font-size: 10px; }
+  .card-value   { font-size: 20px; }
+  .mini-stats   { grid-template-columns: 1fr 1fr; }
+  .ms-label     { font-size: 5px; }
+  .ms-value     { font-size: 9px; }
+  .time-badge   { top: 6px; right: 6px; padding: 5px 8px; font-size: 5px; }
 }

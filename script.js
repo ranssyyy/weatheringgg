@@ -154,78 +154,72 @@ function updateClock() {
 }
 
 /* ----------------------------------------------------------
-   MUSIC PLAYER
-   Uses the Web Audio API to generate Minecraft-style
-   chiptune notes (no external file needed).
-   A real .ogg / .mp3 can be swapped in via the <audio> tag.
+   MUSIC PLAYER — Pigstep Stereo Mix (Web Audio synth)
+   Pigstep-inspired rhythm with chiptune bass + melody
    ---------------------------------------------------------- */
-let audioCtx    = null;
+let audioCtx     = null;
 let musicPlaying = false;
 let musicInterval = null;
 let volumeLevel   = 0.35;
 
-// Minecraft C418-inspired note sequences (frequencies in Hz)
-const MC_MELODY = [
-  261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 392.00, 349.23,
-  329.63, 293.66, 261.63, 246.94, 220.00, 246.94, 261.63, 293.66,
-  329.63, 392.00, 440.00, 493.88, 440.00, 392.00, 349.23, 329.63,
-  293.66, 261.63, 220.00, 196.00, 220.00, 246.94, 261.63, 293.66,
+// Pigstep-inspired note pattern (Lena Raine)
+const PIGSTEP_MELODY = [
+  392.00, 349.23, 329.63, 293.66, 261.63, 293.66, 329.63, 349.23,
+  392.00, 392.00, 440.00, 392.00, 349.23, 329.63, 349.23, 392.00,
+  523.25, 493.88, 440.00, 392.00, 349.23, 392.00, 440.00, 493.88,
+  523.25, 587.33, 523.25, 493.88, 440.00, 392.00, 349.23, 329.63,
+];
+const PIGSTEP_BASS = [
+  130.81, 130.81, 146.83, 146.83, 123.47, 123.47, 130.81, 130.81,
+  130.81, 146.83, 164.81, 146.83, 130.81, 123.47, 130.81, 146.83,
 ];
 let melodyIndex = 0;
-
-const TRACK_NAMES = ['Pigstep — Lena Raine'];
-let trackIndex = 0;
+let bassIndex   = 0;
 
 function getAudioCtx() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
 }
 
-function playNote(freq, duration, delay) {
+function playNote(freq, duration, delay, type = 'sine', vol = 1) {
   const ctx  = getAudioCtx();
   const osc  = ctx.createOscillator();
   const gain = ctx.createGain();
-
-  osc.connect(gain);
-  gain.connect(ctx.destination);
-
-  osc.type = 'sine';
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.type = type;
   osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-
   gain.gain.setValueAtTime(0, ctx.currentTime + delay);
-  gain.gain.linearRampToValueAtTime(volumeLevel * 0.35, ctx.currentTime + delay + 0.02);
-  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration - 0.05);
-
+  gain.gain.linearRampToValueAtTime(volumeLevel * vol * 0.4, ctx.currentTime + delay + 0.03);
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration - 0.04);
   osc.start(ctx.currentTime + delay);
   osc.stop(ctx.currentTime + delay + duration);
 }
 
 function startMelody() {
+  const BPM = 140;
+  const beat = 60 / BPM;
   musicInterval = setInterval(() => {
-    const freq = MC_MELODY[melodyIndex % MC_MELODY.length];
-    playNote(freq, 0.55, 0);
-    // soft harmony
-    playNote(freq * 1.5, 0.45, 0.06);
+    // melody (sine — bright)
+    playNote(PIGSTEP_MELODY[melodyIndex % PIGSTEP_MELODY.length], beat * 0.85, 0, 'sine', 0.8);
+    // bass (square — punchy, every 2 beats)
+    if (melodyIndex % 2 === 0)
+      playNote(PIGSTEP_BASS[(bassIndex++) % PIGSTEP_BASS.length], beat * 1.6, 0, 'square', 0.5);
+    // hi-hat click (very short sawtooth)
+    if (melodyIndex % 4 === 0)
+      playNote(880, 0.04, 0, 'sawtooth', 0.15);
     melodyIndex++;
-  }, 600);
+  }, beat * 1000);
 }
 
 function stopMelody() {
-  if (musicInterval) {
-    clearInterval(musicInterval);
-    musicInterval = null;
-  }
+  if (musicInterval) { clearInterval(musicInterval); musicInterval = null; }
 }
 
 function toggleMusic() {
   const btn    = document.getElementById('musicToggle');
   const status = document.getElementById('musicStatus');
   const note   = document.getElementById('musicNote');
-
   musicPlaying = !musicPlaying;
-
   if (musicPlaying) {
     getAudioCtx().resume();
     startMelody();
@@ -246,92 +240,228 @@ function setVolume(val) {
 }
 
 /* ----------------------------------------------------------
-   CHARTS
+   SUPABASE CONFIG
    ---------------------------------------------------------- */
-const LABELS    = ['12:00','12:05','12:10','12:15','12:20','12:25','12:30','12:35','12:40','12:45','12:50','12:55'];
-const TEMP_DATA = [26.2, 27.1, 27.8, 28.4, 29.0, 28.7, 28.9, 29.2, 28.6, 28.1, 27.9, 28.4];
-const HUM_DATA  = [72, 74, 76, 78, 80, 79, 77, 82, 84, 81, 78, 78];
+const SB_URL = 'https://tzspnjmksbfloelujzjc.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6c3Buam1rc2JmbG9lbHVqempjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODExNDYsImV4cCI6MjA4ODQ1NzE0Nn0.6ymNLXSgyE50BlU1cgD4czM2R5S1jhpHN5ykfr2Q0rc';
+const SB_HEADERS = { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` };
 
+let latestData  = [];
+let tempChartRef = null;
+let humChartRef  = null;
+
+/* ----------------------------------------------------------
+   TIME HELPERS — Philippine Time UTC+8
+   ---------------------------------------------------------- */
+function toPH(str) {
+  const fixed = str.replace(' ', 'T').replace(/\.\d+$/, '') + 'Z';
+  return new Date(new Date(fixed).getTime() + 8 * 3600000);
+}
+function fmtTime(str) {
+  const d = toPH(str);
+  let h = d.getUTCHours();
+  const m = String(d.getUTCMinutes()).padStart(2,'0');
+  const s = String(d.getUTCSeconds()).padStart(2,'0');
+  const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+  return `${h}:${m}:${s} ${ap}`;
+}
+function fmtDateTime(str) {
+  const d = toPH(str);
+  const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  let h = d.getUTCHours();
+  const m = String(d.getUTCMinutes()).padStart(2,'0');
+  const s = String(d.getUTCSeconds()).padStart(2,'0');
+  const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+  return `${mo[d.getUTCMonth()]} ${d.getUTCDate()} - ${h}:${m}:${s} ${ap}`;
+}
+
+/* ----------------------------------------------------------
+   CHARTS — built empty, filled by Supabase data
+   ---------------------------------------------------------- */
 function buildCharts() {
-  const base = {
+  const baseOpts = (color, borderColor) => ({
     responsive: true,
     maintainAspectRatio: false,
-    animation: { duration: 1200, easing: 'easeInOutQuart' },
+    animation: { duration: 900, easing: 'easeInOutCubic' },
+    transitions: {
+      active: { animation: { duration: 400 } }
+    },
     plugins: {
       legend: { display: false },
       tooltip: {
         backgroundColor: '#000', borderWidth: 2,
+        borderColor: color, titleColor: color, bodyColor: '#ffee58',
         titleFont: { family: "'Press Start 2P'", size: 9 },
         bodyFont:  { family: "'Press Start 2P'", size: 9 },
         padding: 12,
+        callbacks: { title: items => items[0].label }
       }
     },
     scales: {
-      x: {
-        ticks: { color: '#777', font: { family: "'Press Start 2P'", size: 6 } },
-        grid:  { color: 'rgba(255,255,255,0.04)' },
-      }
+      x: { ticks: { color: '#777', font: { family: "'Press Start 2P'", size: 6 }, maxTicksLimit: 8 }, grid: { color: 'rgba(255,255,255,0.04)' } },
+      y: { ticks: { color, font: { family: "'Press Start 2P'", size: 6 } }, grid: { color: `rgba(${borderColor},0.08)` } }
     }
-  };
+  });
 
   tempChartRef = new Chart(document.getElementById('tempChart'), {
     type: 'line',
-    data: {
-      labels: LABELS,
-      datasets: [{
-        data: TEMP_DATA,
-        borderColor: '#ff7043', backgroundColor: 'rgba(255,112,67,0.18)',
-        borderWidth: 2.5, pointRadius: 5,
-        pointBackgroundColor: '#ff7043', pointBorderColor: '#000', pointBorderWidth: 2,
-        fill: true, tension: 0, stepped: true,
-      }]
-    },
-    options: {
-      ...base,
-      plugins: { ...base.plugins, tooltip: { ...base.plugins.tooltip, borderColor: '#ff7043', titleColor: '#ff7043', bodyColor: '#ffee58' } },
-      scales: { x: base.scales.x, y: { min: 22, max: 34, ticks: { color: '#ff7043', font: { family: "'Press Start 2P'", size: 6 }, stepSize: 2 }, grid: { color: 'rgba(255,112,67,0.08)' } } }
-    }
+    data: { labels: [], datasets: [{ data: [], borderColor: '#ff7043', backgroundColor: 'rgba(255,112,67,0.18)', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#ff7043', pointBorderColor: '#000', pointBorderWidth: 2, fill: true, tension: 0.35 }] },
+    options: baseOpts('#ff7043', '255,112,67')
   });
 
   humChartRef = new Chart(document.getElementById('humChart'), {
     type: 'line',
-    data: {
-      labels: LABELS,
-      datasets: [{
-        data: HUM_DATA,
-        borderColor: '#29b6f6', backgroundColor: 'rgba(41,182,246,0.18)',
-        borderWidth: 2.5, pointRadius: 5,
-        pointBackgroundColor: '#29b6f6', pointBorderColor: '#000', pointBorderWidth: 2,
-        fill: true, tension: 0, stepped: true,
-      }]
-    },
-    options: {
-      ...base,
-      plugins: { ...base.plugins, tooltip: { ...base.plugins.tooltip, borderColor: '#29b6f6', titleColor: '#29b6f6', bodyColor: '#ffee58' } },
-      scales: { x: base.scales.x, y: { min: 70, max: 88, ticks: { color: '#29b6f6', font: { family: "'Press Start 2P'", size: 6 }, stepSize: 2 }, grid: { color: 'rgba(41,182,246,0.08)' } } }
-    }
+    data: { labels: [], datasets: [{ data: [], borderColor: '#29b6f6', backgroundColor: 'rgba(41,182,246,0.18)', borderWidth: 2.5, pointRadius: 4, pointBackgroundColor: '#29b6f6', pointBorderColor: '#000', pointBorderWidth: 2, fill: true, tension: 0.35 }] },
+    options: baseOpts('#29b6f6', '41,182,246')
   });
 }
 
 /* ----------------------------------------------------------
-   READINGS TABLE
+   SUPABASE FETCH — main data pipeline
    ---------------------------------------------------------- */
-function buildReadings() {
-  const tbody    = document.getElementById('readings-body');
-  const reversed = [...LABELS].reverse();
-  const statuses = ['NORMAL','NORMAL','HIGH HUM','NORMAL','NORMAL','NORMAL'];
+async function fetchSensorData() {
+  try {
+    // Fetch latest 20 readings
+    const res = await fetch(
+      `${SB_URL}/rest/v1/sensor_data?select=*&order=created_at.desc&limit=20`,
+      { headers: SB_HEADERS }
+    );
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.length) return;
 
-  reversed.slice(0, 6).forEach((t, i) => {
-    const tr   = document.createElement('tr');
-    const high = statuses[i] === 'HIGH HUM';
-    tr.innerHTML = `
-      <td>${t}</td>
-      <td>${TEMP_DATA[LABELS.length - 1 - i].toFixed(1)}</td>
-      <td>${HUM_DATA[LABELS.length - 1 - i]}</td>
-      <td style="color:${high ? '#ff7043' : '#66bb6a'}">${statuses[i]}</td>
-    `;
-    tbody.appendChild(tr);
-  });
+    latestData = data;
+
+    // Fetch total count
+    const countRes = await fetch(
+      `${SB_URL}/rest/v1/sensor_data?select=id`,
+      { headers: { ...SB_HEADERS, 'Prefer': 'count=exact', 'Range': '0-0' } }
+    );
+    const countRange = countRes.headers.get('content-range') || '';
+    const totalCount = countRange.split('/')[1] || data.length;
+    const totalEl = document.getElementById('totalReadings');
+    if (totalEl) totalEl.textContent = Number(totalCount).toLocaleString();
+
+    // Update LIVE badge
+    const dot    = document.getElementById('liveDot');
+    const status = document.getElementById('liveStatus');
+    if (dot)    { dot.className = 'live-dot'; }
+    if (status) { status.textContent = '● LIVE · ESP32 CONNECTED'; }
+
+    // Last update time
+    const lu = document.getElementById('lastUpdate');
+    if (lu) lu.textContent = fmtTime(data[0].created_at);
+
+    // ── Latest reading → cards ────────────────────────────
+    const latest = data[0];
+    const temp   = parseFloat(latest.temperature);
+    const hum    = parseFloat(latest.humidity);
+
+    const tempCard  = document.querySelector('.temp-card .card-value');
+    const humCard   = document.querySelector('.hum-card  .card-value');
+    const tempStat  = document.querySelector('.temp-card .card-status');
+    const humStat   = document.querySelector('.hum-card  .card-status');
+
+    if (tempCard) tempCard.textContent = temp.toFixed(1) + '°C';
+    if (humCard)  humCard.textContent  = hum.toFixed(1)  + '%';
+    if (tempStat) tempStat.textContent = '● LIVE · ' + fmtTime(latest.created_at);
+    if (humStat)  humStat.textContent  = '● LIVE · ' + fmtTime(latest.created_at);
+
+    // ── Mini stats ────────────────────────────────────────
+    const temps  = data.map(d => d.temperature);
+    const hums   = data.map(d => d.humidity);
+    const stats  = document.querySelectorAll('.ms-value');
+    if (stats[0]) stats[0].textContent = Math.max(...temps).toFixed(1) + '°C';
+    if (stats[1]) stats[1].textContent = Math.min(...temps).toFixed(1) + '°C';
+    if (stats[2]) stats[2].textContent = Math.max(...hums).toFixed(1)  + '%';
+    if (stats[3]) stats[3].textContent = Math.min(...hums).toFixed(1)  + '%';
+
+    // ── Charts — smooth animated update ──────────────────
+    const rev    = [...data].reverse();
+    const labels = rev.map(d => fmtTime(d.created_at));
+
+    if (tempChartRef) {
+      tempChartRef.data.labels              = labels;
+      tempChartRef.data.datasets[0].data   = rev.map(d => d.temperature);
+      tempChartRef.update('active');
+    }
+    if (humChartRef) {
+      humChartRef.data.labels              = labels;
+      humChartRef.data.datasets[0].data   = rev.map(d => d.humidity);
+      humChartRef.update('active');
+    }
+
+    // ── Ticker live values ────────────────────────────────
+    document.querySelectorAll('.ticker-item').forEach((t, i) => {
+      if (i % 2 === 1)
+        t.textContent = `🌡️ TEMP: ${temp.toFixed(1)}°C · 💧 HUMIDITY: ${hum.toFixed(1)}% · ☀️ SKY UPDATES WITH YOUR LOCAL TIME · ♪ PRESS PLAY FOR MINECRAFT MUSIC`;
+    });
+
+    // ── Comfort index ─────────────────────────────────────
+    const comfort = Math.max(0, Math.min(100,
+      100 - Math.abs(temp - 26) * 5 - Math.abs(hum - 60) * 0.4
+    ));
+    const bar   = document.querySelector('.comfort-bar-fill');
+    const score = document.querySelector('.comfort-score');
+    if (bar)   bar.style.width = comfort.toFixed(0) + '%';
+    if (score) score.textContent = comfort.toFixed(0) + ' / 100';
+
+    // ── Alert toast ───────────────────────────────────────
+    const alertMsg = document.querySelector('.alert-msg');
+    if (alertMsg) alertMsg.textContent =
+      `Current humidity ${hum.toFixed(0)}% — ${hum > 80 ? 'above comfort zone. Consider ventilating the area or using a dehumidifier.' : 'within normal range.'}`;
+
+    // ── Readings table ────────────────────────────────────
+    buildReadings(data);
+
+  } catch (err) {
+    console.error('Supabase fetch error:', err);
+    const dot    = document.getElementById('liveDot');
+    const status = document.getElementById('liveStatus');
+    if (dot)    { dot.className = 'live-dot offline'; }
+    if (status) { status.textContent = '● OFFLINE · CHECK CONNECTION'; }
+  }
+}
+
+/* ----------------------------------------------------------
+   READINGS TABLE — populated by real data
+   ---------------------------------------------------------- */
+function buildReadings(data) {
+  if (!data) return;
+  const tbody = document.getElementById('readings-body');
+  tbody.innerHTML = data.slice(0, 8).map(d => {
+    const highHum  = d.humidity > 80;
+    const highTemp = d.temperature > 30;
+    const status   = highHum ? 'HIGH HUM' : highTemp ? 'HIGH TEMP' : 'NORMAL';
+    const color    = (highHum || highTemp) ? '#ff7043' : '#66bb6a';
+    return `<tr>
+      <td>${fmtTime(d.created_at)}</td>
+      <td>${parseFloat(d.temperature).toFixed(1)}</td>
+      <td>${parseFloat(d.humidity).toFixed(1)}</td>
+      <td style="color:${color}">${status}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ----------------------------------------------------------
+   CSV EXPORT
+   ---------------------------------------------------------- */
+function downloadCSV(type) {
+  if (!latestData.length) return alert('No data to export yet!');
+  let rows, filename;
+  if (type === 'temperature') {
+    rows = [['ID','Temperature (°C)','Date & Time (PH)']];
+    latestData.forEach(d => rows.push([d.id, parseFloat(d.temperature).toFixed(1), fmtDateTime(d.created_at)]));
+    filename = `temperature_${new Date().toISOString().slice(0,10)}.csv`;
+  } else {
+    rows = [['ID','Humidity (%)','Date & Time (PH)']];
+    latestData.forEach(d => rows.push([d.id, parseFloat(d.humidity).toFixed(1), fmtDateTime(d.created_at)]));
+    filename = `humidity_${new Date().toISOString().slice(0,10)}.csv`;
+  }
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = filename; a.click();
 }
 
 /* ----------------------------------------------------------
@@ -398,148 +528,22 @@ function dismissAlert() {
 /* ----------------------------------------------------------
    INIT
    ---------------------------------------------------------- */
-/* ----------------------------------------------------------
-   SUPABASE CONFIG
-   ---------------------------------------------------------- */
-const SUPABASE_URL = 'https://tzspnjmksbfloelujzjc.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6c3Buam1rc2JmbG9lbHVqempjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4ODExNDYsImV4cCI6MjA4ODQ1NzE0Nn0.6ymNLXSgyE50BlU1cgD4czM2R5S1jhpHN5ykfr2Q0rc';
-
-let latestData = [];
-let tempChartRef = null;
-let humChartRef  = null;
-
-/* ----------------------------------------------------------
-   TIME HELPERS (PH UTC+8)
-   ---------------------------------------------------------- */
-function toPH(dateStr) {
-  const fixed = dateStr.replace(' ','T').replace(/\.\d+$/, '') + 'Z';
-  return new Date(new Date(fixed).getTime() + 8 * 3600000);
-}
-function fmtTime(dateStr) {
-  const d = toPH(dateStr);
-  let h = d.getUTCHours();
-  const m = String(d.getUTCMinutes()).padStart(2,'0');
-  const s = String(d.getUTCSeconds()).padStart(2,'0');
-  const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
-  return `${h}:${m}:${s} ${ap}`;
-}
-function fmtDateTime(dateStr) {
-  const d = toPH(dateStr);
-  const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  let h = d.getUTCHours();
-  const m = String(d.getUTCMinutes()).padStart(2,'0');
-  const s = String(d.getUTCSeconds()).padStart(2,'0');
-  const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
-  return `${mo[d.getUTCMonth()]} ${d.getUTCDate()} - ${h}:${m}:${s} ${ap}`;
-}
-
-/* ----------------------------------------------------------
-   FETCH FROM SUPABASE
-   ---------------------------------------------------------- */
-async function fetchSensorData() {
-  try {
-    const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/sensor_data?select=*&order=created_at.desc&limit=20`,
-      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
-    );
-    if (!res.ok) throw new Error('fetch failed');
-    const data = await res.json();
-    if (!data.length) return;
-    latestData = data;
-
-    const latest = data[0];
-    const temp = latest.temperature.toFixed(1);
-    const hum  = latest.humidity.toFixed(1);
-
-    // Update cards
-    document.querySelector('.temp-card .card-value').textContent = temp + '°C';
-    document.querySelector('.hum-card  .card-value').textContent = hum  + '%';
-    document.querySelector('.temp-card .card-status').textContent = '● LIVE · ' + fmtTime(latest.created_at);
-    document.querySelector('.hum-card  .card-status').textContent = '● LIVE · ' + fmtTime(latest.created_at);
-
-    // Stats
-    const temps = data.map(d => d.temperature);
-    const hums  = data.map(d => d.humidity);
-    const stats = document.querySelectorAll('.ms-value');
-    if (stats[0]) stats[0].textContent = Math.max(...temps).toFixed(1) + '°C';
-    if (stats[1]) stats[1].textContent = Math.min(...temps).toFixed(1) + '°C';
-    if (stats[2]) stats[2].textContent = Math.max(...hums).toFixed(1) + '%';
-    if (stats[3]) stats[3].textContent = Math.min(...hums).toFixed(1) + '%';
-
-    // Charts
-    const rev    = [...data].reverse();
-    const labels = rev.map(d => fmtTime(d.created_at));
-    if (tempChartRef) { tempChartRef.data.labels = labels; tempChartRef.data.datasets[0].data = rev.map(d => d.temperature); tempChartRef.update(); }
-    if (humChartRef)  { humChartRef.data.labels  = labels; humChartRef.data.datasets[0].data  = rev.map(d => d.humidity);    humChartRef.update(); }
-
-    // Table
-    const tbody = document.getElementById('readings-body');
-    tbody.innerHTML = data.slice(0, 8).map(d => {
-      const highHum = d.humidity > 80;
-      return `<tr>
-        <td>${fmtTime(d.created_at)}</td>
-        <td>${d.temperature.toFixed(1)}</td>
-        <td>${d.humidity.toFixed(1)}</td>
-        <td style="color:${highHum ? '#ff7043' : '#66bb6a'}">${highHum ? 'HIGH HUM' : 'NORMAL'}</td>
-      </tr>`;
-    }).join('');
-
-    // Ticker live update
-    const tickers = document.querySelectorAll('.ticker-item');
-    tickers.forEach((t, i) => {
-      if (i % 2 === 1) t.textContent = `🌡️ TEMP: ${temp}°C · 💧 HUMIDITY: ${hum}% · ☀️ SKY UPDATES WITH YOUR LOCAL TIME · ♪ PRESS PLAY FOR MINECRAFT MUSIC`;
-    });
-
-    // Comfort bar
-    const comfort = Math.max(0, Math.min(100, 100 - Math.abs(parseFloat(temp) - 26) * 5 - Math.abs(parseFloat(hum) - 60) * 0.5));
-    const bar = document.querySelector('.comfort-bar-fill');
-    const score = document.querySelector('.comfort-score');
-    if (bar)   bar.style.width = comfort.toFixed(0) + '%';
-    if (score) score.textContent = comfort.toFixed(0) + ' / 100';
-
-  } catch(e) {
-    console.error('Supabase fetch error:', e);
-  }
-}
-
-/* ----------------------------------------------------------
-   CSV EXPORT
-   ---------------------------------------------------------- */
-function downloadCSV(type) {
-  if (!latestData.length) return alert('No data yet!');
-  let rows, filename;
-  if (type === 'temperature') {
-    rows = [['ID','Temperature (°C)','Date & Time (PH)']];
-    latestData.forEach(d => rows.push([d.id, d.temperature.toFixed(1), fmtDateTime(d.created_at)]));
-    filename = `temperature_${new Date().toISOString().slice(0,10)}.csv`;
-  } else {
-    rows = [['ID','Humidity (%)','Date & Time (PH)']];
-    latestData.forEach(d => rows.push([d.id, d.humidity.toFixed(1), fmtDateTime(d.created_at)]));
-    filename = `humidity_${new Date().toISOString().slice(0,10)}.csv`;
-  }
-  const csv = rows.map(r => r.join(',')).join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
-  a.download = filename; a.click();
-}
-
-/* ----------------------------------------------------------
-   INIT
-   ---------------------------------------------------------- */
 window.addEventListener('DOMContentLoaded', () => {
   startLoadingScreen();
 
+  // Sky + clock
   updateSky();
-  setInterval(updateSky, 30 * 1000);
+  setInterval(updateSky,   30 * 1000);
   setInterval(updateClock, 1000);
 
+  // Build empty charts (data loaded by Supabase)
   buildCharts();
-  buildReadings();
   renderSuggestions();
 
-  document.getElementById('musicTitle').textContent = TRACK_NAMES[0];
+  // Music track label
+  document.getElementById('musicTitle').textContent = 'Pigstep — Lena Raine';
 
-  // Fetch real sensor data
+  // Initial fetch then poll every 5 seconds
   fetchSensorData();
   setInterval(fetchSensorData, 5000);
 });
